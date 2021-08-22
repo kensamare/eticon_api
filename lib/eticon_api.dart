@@ -25,7 +25,7 @@ class Api {
     _ApiST.instance.setGlobalTestMode(globalTestMode);
   }
 
-  static void bearerToken(bool mode){
+  static void bearerToken(bool mode) {
     _ApiST.instance.setBearerMode(mode);
   }
 
@@ -217,7 +217,7 @@ class _ApiST {
   static bool _enableUtf8Decoding = false;
 
   ///Set Bearer token mode
-  void setBearerMode(bool mode){
+  void setBearerMode(bool mode) {
     _bearerAuth = mode;
   }
 
