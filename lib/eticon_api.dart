@@ -7,7 +7,7 @@ class EticonApiError extends Error{
   EticonApiError({required this.error});
   String toString() {
     var message = this.error;
-    return "EticonApiError: $message";
+    return "$message";
   }
 
   @override
@@ -18,12 +18,25 @@ class Api {
   static void setBaseUrl(String url) {
     if (!url.startsWith('http') || !url.startsWith('http'))
       throw EticonApiError(error: 'The url should start with https or http');
-    ApiST.instance.setBaseUrl(url);
+    _ApiST.instance.setBaseUrl(url);
   }
 }
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
+//
+class _ApiST {
+  _ApiST._();
+
+  static _ApiST instance = _ApiST._();
+
+  //Base url int singletons
+  static String? _baseUrl;
+
+  //enable or disable global test mode for all
+  static bool _globalTestMode = false;
+
+  ///Sets the base URL for processing requests
+  void setBaseUrl(String url){
+    print(url);
+  }
+
 }
