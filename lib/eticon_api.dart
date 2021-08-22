@@ -14,7 +14,7 @@ class Api {
     if (url.isEmpty) {
       throw EticonApiError(error: 'URL is empty');
     }
-    if (!url.startsWith('http') || !url.startsWith('http'))
+    if (!url.startsWith('https') || !url.startsWith('http'))
       throw EticonApiError(error: 'The url should start with https or http');
     if (url[url.length - 1] != '/') url += '/';
     _ApiST.instance.setBaseUrl(url);

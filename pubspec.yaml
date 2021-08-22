@@ -1,6 +1,6 @@
 name: eticon_api
 description: Networking package
-version: 0.0.1-beta
+version: 1.0.0-beta
 homepage: https://github.com/kensamare/eticon_api
 
 environment:

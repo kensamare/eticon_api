@@ -1,13 +1,11 @@
-
-
 import 'package:eticon_api/api_errors.dart';
 import 'package:eticon_api/eticon_api.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
   bool tokenLoaded = await Api.loadTokenFromMemory();
-  if(tokenLoaded){
-    print('Token loaded from memory');
+  if (tokenLoaded) {
+    print(Api.token);
   }
   Api.setBaseUrl('https://example.com/');
   runApp(MyApp());
@@ -48,9 +46,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> getRequest() async {
-    try{
-      Map<String, dynamic> response = await Api.get(method: 'product',);
-    } on APIException catch(error){
+    try {
+      Map<String, dynamic> response = await Api.get(
+        method: 'product',
+      );
+    } on APIException catch (error) {
       print('ERROR CODE: ${error.code}');
     }
   }
