@@ -2,6 +2,29 @@
 
 Networking package
 
+## Usage
+
+First, set the base url:
+`void main(){
+  Api.setBaseUrl('https://example.com/');
+  runApp(MyApp());
+}`
+
+Next, create a function to send requests:
+`  Future<void> getRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.get(method: 'product',);
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }`
+
+Available methods:
+..*get
+..*post
+..*put
+..*delete
+
 ## Authorizathion Token
 
 ```bool tokenLoaded = await Api.loadTokenFromMemory();```
