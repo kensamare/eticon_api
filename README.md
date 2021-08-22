@@ -2,7 +2,7 @@
 
 Networking package
 
-##Authorizathion Token
+## Authorizathion Token
 
 bool tokenLoaded = await Api.loadTokenFromMemory();
 
