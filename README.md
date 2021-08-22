@@ -24,10 +24,10 @@ Future<void> getRequest() async {
   ```
 
 Available methods:
-*get
-*post
-*put
-*delete
+  *get
+  *post
+  *put
+  *delete
 
 ## Authorizathion Token
 
