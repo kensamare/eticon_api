@@ -23,6 +23,18 @@ Future<void> getRequest() async {
   }
   ```
 
+To set headers use Api.setHeaders. Please note that on an authorized request, the header "Authorization" will be automatically added. Default headers is only "Content-type": 'application/json', if you want to change them use the described method.
+```dart
+void main() async {
+  bool tokenLoaded = await Api.loadTokenFromMemory();
+  if(tokenLoaded){
+    print(Api.token);
+  }
+  Api.setBaseUrl('https://example.com/');
+  Api.setHeaders({"Content-type": 'application/json'});
+  runApp(MyApp());
+}
+```
 Available methods:
   * get
   * post
@@ -53,11 +65,67 @@ void main() async {
   runApp(MyApp());
 }
 ```
+
+To send an authorized request, you just need to set the isAuth parameter to true:
+```dart
+Future<void> getRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.post(method: 'send', body:{'count': 1}, isAuth: true);
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+  ```
+
 ## Test Mode
+Test mode is a handy tool for application development that shows complete information about the request (parameters, full url, response body, etc.). Also, this function disables all error handlers. 
+Test mode can be set both globally for all requests in the project:
+```dart
+void main() async {
+  bool tokenLoaded = await Api.loadTokenFromMemory();
+  if(tokenLoaded){
+    print(Api.token);
+  }
+  Api.setBaseUrl('https://example.com/');
+  Api.globalTestMode(true);
+  runApp(MyApp());
+}
+```
+
+And for an individual request:
+```dart
+Future<void> getRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.put(method: 'user/update', body:{'first_name': 'Andrew'}, isAuth: true, testMode: true);
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+To disable everything in the test mode in the project, you can use disableAllTestMode:
+```dart
+void main() async {
+  bool tokenLoaded = await Api.loadTokenFromMemory();
+  if(tokenLoaded){
+    print(Api.token);
+  }
+  Api.setBaseUrl('https://example.com/');
+  Api.globalTestMode(true); // Will be ignored
+  Api.disableAllTestMode(true);
+  runApp(MyApp());
+}
+```
+## UTF-8 Decoding
+
+There is built-in support for decoding in response to utf-8
+```dart
+void main() async {
+  Api.setBaseUrl('https://example.com/');
+  Api.enableUtf8Decoding(true);
+  runApp(MyApp());
+}
 
 
-
-```bool tokenLoaded = await Api.loadTokenFromMemory();```
 
 ## Getting Started
 
