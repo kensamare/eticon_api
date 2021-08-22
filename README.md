@@ -31,6 +31,32 @@ Available methods:
 
 ## Authorizathion Token
 
+
+For authorized requests, you need to set a token. The token will also be written to the device memory:
+```dart
+await Api.setToken('{your_token}');
+```
+
+Getting a written token:
+```dart
+Api.token;
+```
+
+At the start of the application, you can unload the recorded token into the device memory, for example, so as not to re-authorize:
+```dart
+void main() async {
+  bool tokenLoaded = await Api.loadTokenFromMemory();
+  if(tokenLoaded){
+    print(Api.token);
+  }
+  Api.setBaseUrl('https://example.com/');
+  runApp(MyApp());
+}
+```
+## Test Mode
+
+
+
 ```bool tokenLoaded = await Api.loadTokenFromMemory();```
 
 ## Getting Started
