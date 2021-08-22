@@ -1,7 +1,7 @@
 library eticon_api;
 
 import 'package:eticon_api/api_st.dart';
-
+//Class of EticonApiError
 class EticonApiError extends Error implements UnsupportedError {
   String error;
   EticonApiError({required this.error});
