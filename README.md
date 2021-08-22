@@ -4,7 +4,7 @@ Networking package
 
 ## Usage
 
-First, set the base url:\n
+First, set the base url:
 ```dart
 void main(){
   Api.setBaseUrl('https://example.com/');
@@ -12,7 +12,7 @@ void main(){
 }
 ```
 
-Next, create a function to send requests:\n
+Next, create a function to send requests:
 ```dart
 Future<void> getRequest() async {
     try{
@@ -24,10 +24,10 @@ Future<void> getRequest() async {
   ```
 
 Available methods:
-  *get
-  *post
-  *put
-  *delete
+  * get
+  * post
+  * put
+  * delete
 
 ## Authorizathion Token
 
