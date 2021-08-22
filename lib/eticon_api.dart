@@ -15,7 +15,7 @@ class Api {
   static void setBaseUrl(String url) {
     if (!url.startsWith('http') || !url.startsWith('http'))
       throw EticonApiError(error: 'The url should start with https or http');
-    if(url[url.length - 1] == '/')
+    if(url[url.length - 1] != '/')
       url += '/';
     _ApiST.instance.setBaseUrl(url);
   }
