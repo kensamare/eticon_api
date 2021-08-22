@@ -2,6 +2,10 @@
 
 Networking package
 
+##Authorizathion Token
+
+bool tokenLoaded = await Api.loadTokenFromMemory();
+
 ## Getting Started
 
 This project is a starting point for a Dart
