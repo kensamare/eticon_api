@@ -45,6 +45,7 @@ class Api {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
     if (token.isNotEmpty) {
+      _Token.instance.setToken(token);
       return true;
     }
     return false;
