@@ -2,11 +2,22 @@ library eticon_api;
 
 import 'package:eticon_api/api_st.dart';
 
+class EticonApiError extends Error implements UnsupportedError {
+  String error;
+  EticonApiError({required this.error});
+  String toString() {
+    var message = this.error;
+    return "EticonApiError: $message";
+  }
+
+  @override
+  String? get message => this.error;
+}
 
 class Api {
   static void setBaseUrl(String url) {
     if (!url.startsWith('http') || !url.startsWith('http'))
-      assert(false, 'NOT CORRECT URL');
+      throw EticonApiError(error: 'The url should start with https or http');
     ApiST.instance.setBaseUrl(url);
   }
 }
