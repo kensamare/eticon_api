@@ -1,5 +1,5 @@
-# eticon_api
-
+# Eticon API
+Network package
 Networking package
 
 ## Usage
@@ -76,6 +76,18 @@ Future<void> getRequest() async {
     }
   }
   ```
+If you are using a non-Bearer token use the following:
+```dart
+void main() async {
+  bool tokenLoaded = await Api.loadTokenFromMemory();
+  if(tokenLoaded){
+    print(Api.token);
+  }
+  Api.setBaseUrl('https://example.com/');
+  Api.bearerToken(false);
+  runApp(MyApp());
+}
+```
 
 ## Test Mode
 Test mode is a handy tool for application development that shows complete information about the request (parameters, full url, response body, etc.). Also, this function disables all error handlers. 
@@ -124,7 +136,7 @@ void main() async {
   Api.enableUtf8Decoding(true);
   runApp(MyApp());
 }
-
+```
 
 
 ## Getting Started

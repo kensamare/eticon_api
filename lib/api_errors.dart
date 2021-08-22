@@ -1,9 +1,10 @@
-
 ///Main Api error class
-class EticonApiError extends Error{
+class EticonApiError extends Error {
   ///Error String
   String error;
+
   EticonApiError({required this.error});
+
   String toString() {
     var message = this.error;
     return "$message";
@@ -18,6 +19,7 @@ class EticonApiError extends Error{
 class APIException implements Exception {
   ///Error code
   int code;
+
   ///Error message
   String? message;
 
@@ -29,5 +31,4 @@ class APIException implements Exception {
     print(message);
     return '$code ${message ?? ""}';
   }
-
 }

@@ -1,6 +1,6 @@
 name: eticon_api
-description: Networking package
-version: 1.0.0-beta
+description: 'This package will help you quickly and easily work with the REST API. All you need to do is select one of the 4 required requests: GET, POST, DELET, PUT. Test Mode will help you track the performance of requests during development. An autosave token will avoid repeated authorizations.'
+version: 1.0.2+1-beta
 homepage: https://github.com/kensamare/eticon_api
 
 environment:
