@@ -5,25 +5,29 @@ Networking package
 ## Usage
 
 First, set the base url:\n
-`void main(){
+```dart
+void main(){
   Api.setBaseUrl('https://example.com/');
   runApp(MyApp());
-}`
+}
+```
 
 Next, create a function to send requests:\n
-`  Future<void> getRequest() async {
+```dart
+Future<void> getRequest() async {
     try{
       Map<String, dynamic> response = await Api.get(method: 'product',);
     } on APIException catch(error){
       print('ERROR CODE: ${error.code}');
     }
-  }`
+  }
+  ```
 
 Available methods:
-⋅⋅*get
-⋅⋅*post
-⋅⋅*put
-⋅⋅*delete
+*get
+*post
+*put
+*delete
 
 ## Authorizathion Token
 
