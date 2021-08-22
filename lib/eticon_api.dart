@@ -69,6 +69,12 @@ class _ApiST {
 
   static bool _disableState = false;
 
+  static bool _enableUtf8Decoding = false;
+
+  void enableUtf8Decoding(bool decoding){
+    _enableUtf8Decoding = decoding;
+  }
+
   String? get baseUrl => _baseUrl;
 
   ///Sets the base URL for processing requests
@@ -126,12 +132,19 @@ class _ApiST {
         response = await http.get(url, headers: getNoAuthHeader);
       }
       log(response.statusCode.toString(), name: 'API TEST GET: Response Code');
+      String responseBody;
+      if(_enableUtf8Decoding){
+        responseBody = utf8.decode(response.body.runes.toList());
+      }
+      else{
+        responseBody = response.body;
+      }
       if(response.body[0] == '{'){
-        log(utf8.decode(response.body.runes.toList()),
+        log(responseBody,
             name: 'API TEST GET: Response Body');
       }
       else{
-        log(json.decode(utf8.decode(response.body.runes.toList())).toString(),
+        log(json.decode(responseBody).toString(),
             name: 'API TEST GET: Response Body');
       }
 
@@ -140,29 +153,29 @@ class _ApiST {
         if (isAuth) {
           response = await http.get(url,
               headers: getAuthHeader(token: _Token.instance.token));
-          // log(response.body);
         } else {
           response = await http.get(url, headers: getNoAuthHeader);
         }
-
-        //(utf8.decode(response.body.runes.toList());
-        // log(response.body.toString(), name: "XXXX1");
       } catch (err) {
         // Отсутствие интернета
         print(err);
         throw APIException(0);
       }
     }
-
     // Если все не ок то отправляем код ответа http
     if (response.statusCode != 200) {
       throw APIException(response.statusCode);
     }
-
     // Десериализация json
 
     //var responseParams = json.decode(response.body);
-    var responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+    var responseParams;
+    if(_enableUtf8Decoding){
+      responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+    }
+    else{
+      responseParams = json.decode(response.body);
+    }
     // Проверка на Map
     if (responseParams is! Map) {
       if (testMode) {
@@ -246,7 +259,13 @@ class _ApiST {
 
     // Десериализация json
     // var responseParams = json.decode(response.body);
-    var responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+    var responseParams;
+    if(_enableUtf8Decoding){
+      responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+    }
+    else{
+      responseParams = json.decode(response.body);
+    }
     // Проверка на Map
     if (responseParams is! Map) {
       if (testMode) {
@@ -319,7 +338,13 @@ class _ApiST {
 
     // Десериализация json
     //var responseParams = json.decode(response.body);
-    var responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+    var responseParams;
+    if(_enableUtf8Decoding){
+      responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+    }
+    else{
+      responseParams = json.decode(response.body);
+    }
     //log(response.body, name: 'Response');
     // Проверка на Map
     if (responseParams is! Map) {
@@ -399,9 +424,13 @@ class _ApiST {
     }
 
     // Десериализация json
-    //var responseParams = json.decode(response.body);
-    var responseParams =
-    json.decode(utf8.decode(response.body.runes.toList())); //UTF-8
+    var responseParams;
+    if(_enableUtf8Decoding){
+      responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+    }
+    else{
+      responseParams = json.decode(response.body);
+    }
     // Проверка на Map
     if (responseParams is! Map) {
       if (testMode) {
