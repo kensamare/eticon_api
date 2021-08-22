@@ -8,45 +8,43 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart' show Response;
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class Api {
-
   ///Sets the base url for requests to work
   static void setBaseUrl(String url) {
-    if(url.isEmpty){
+    if (url.isEmpty) {
       throw EticonApiError(error: 'URL is empty');
     }
     if (!url.startsWith('http') || !url.startsWith('http'))
       throw EticonApiError(error: 'The url should start with https or http');
-    if(url[url.length - 1] != '/')
-      url += '/';
+    if (url[url.length - 1] != '/') url += '/';
     _ApiST.instance.setBaseUrl(url);
   }
 
   ///All requests that exist in the project will work in test mode
-  static void globalTestMode(bool globalTestMode){
+  static void globalTestMode(bool globalTestMode) {
     _ApiST.instance.setGlobalTestMode(globalTestMode);
   }
 
   ///Disable test mode completely for all requests existing in the project
-  static void disableAllTestMode(bool disableState){
+  static void disableAllTestMode(bool disableState) {
     _ApiST.instance.disableAllTestMode(disableState);
   }
+
   ///Set true to enable Utf-8 decoding
-  static void enableUtf8Decoding(bool enable){
+  static void enableUtf8Decoding(bool enable) {
     _ApiST.instance.enableUtf8Decoding(enable);
   }
 
-///Set headers. Default is only "Content-type": application/json
-  static void setHeaders(Map<String, String> headers){
+  ///Set headers. Default is only "Content-type": application/json
+  static void setHeaders(Map<String, String> headers) {
     _ApiST.instance.setHeaders(headers);
   }
 
   ///Loads a token from device memory, return true if the token is in memory, else return false;
-  static Future<bool> loadTokenFromMemory() async{
+  static Future<bool> loadTokenFromMemory() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token') ?? '';
-    if(token.isNotEmpty){
+    if (token.isNotEmpty) {
       return true;
     }
     return false;
@@ -63,92 +61,108 @@ class Api {
   }
 
   /// Sends an HTTP GET request.
-  static Future<Map<String, dynamic>> get({required String method,
-    bool isAuth = false,
-    bool testMode = false,
-    Map<String, dynamic>? query}) async {
-    if(_ApiST.instance.baseUrl == null) {
+  static Future<Map<String, dynamic>> get(
+      {required String method,
+      bool isAuth = false,
+      bool testMode = false,
+      Map<String, dynamic>? query}) async {
+    if (_ApiST.instance.baseUrl == null) {
       throw EticonApiError(
           error: 'Base url not set, use Api.setBaseUrl (String url)');
     }
-    if(isAuth){
-      if(_Token.instance.token == null){
+    if (isAuth) {
+      if (_Token.instance.token == null) {
         throw EticonApiError(
-            error: 'Authentication token is not set, use Api.setToken (String url)');
+            error:
+                'Authentication token is not set, use Api.setToken (String url)');
       }
-      if(_Token.instance.token!.isEmpty){
+      if (_Token.instance.token!.isEmpty) {
         throw EticonApiError(
-            error: 'Authentication token is empty, use Api.setToken (String url)');
+            error:
+                'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await _ApiST.instance.getRequest(method: method, isAuth: isAuth, testMode: testMode, query: query);
+    return await _ApiST.instance.getRequest(
+        method: method, isAuth: isAuth, testMode: testMode, query: query);
   }
+
   /// Sends an HTTP POST request.
-  static Future<Map<String, dynamic>> post({required String method,
-    bool isAuth = false,
-    bool testMode = false,
-    required Map<String, dynamic> body}) async {
-    if(_ApiST.instance.baseUrl == null) {
+  static Future<Map<String, dynamic>> post(
+      {required String method,
+      bool isAuth = false,
+      bool testMode = false,
+      required Map<String, dynamic> body}) async {
+    if (_ApiST.instance.baseUrl == null) {
       throw EticonApiError(
           error: 'Base url not set, use Api.setBaseUrl (String url)');
     }
-    if(isAuth){
-      if(_Token.instance.token == null){
+    if (isAuth) {
+      if (_Token.instance.token == null) {
         throw EticonApiError(
-            error: 'Authentication token is not set, use Api.setToken (String url)');
+            error:
+                'Authentication token is not set, use Api.setToken (String url)');
       }
-      if(_Token.instance.token!.isEmpty){
+      if (_Token.instance.token!.isEmpty) {
         throw EticonApiError(
-            error: 'Authentication token is empty, use Api.setToken (String url)');
+            error:
+                'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await _ApiST.instance.postRequest(method: method, isAuth: isAuth, testMode: testMode, body: body);
+    return await _ApiST.instance.postRequest(
+        method: method, isAuth: isAuth, testMode: testMode, body: body);
   }
 
   /// Sends an HTTP PUT request.
-  static Future<Map<String, dynamic>> put({required String method,
-    bool isAuth = false,
-    bool testMode = false,
-    required Map<String, dynamic> body}) async {
-    if(_ApiST.instance.baseUrl == null) {
+  static Future<Map<String, dynamic>> put(
+      {required String method,
+      bool isAuth = false,
+      bool testMode = false,
+      required Map<String, dynamic> body}) async {
+    if (_ApiST.instance.baseUrl == null) {
       throw EticonApiError(
           error: 'Base url not set, use Api.setBaseUrl (String url)');
     }
-    if(isAuth){
-      if(_Token.instance.token == null){
+    if (isAuth) {
+      if (_Token.instance.token == null) {
         throw EticonApiError(
-            error: 'Authentication token is not set, use Api.setToken (String url)');
+            error:
+                'Authentication token is not set, use Api.setToken (String url)');
       }
-      if(_Token.instance.token!.isEmpty){
+      if (_Token.instance.token!.isEmpty) {
         throw EticonApiError(
-            error: 'Authentication token is empty, use Api.setToken (String url)');
+            error:
+                'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await _ApiST.instance.putRequest(method: method, isAuth: isAuth, testMode: testMode, body: body);
+    return await _ApiST.instance.putRequest(
+        method: method, isAuth: isAuth, testMode: testMode, body: body);
   }
 
   /// Sends an HTTP DELETE request.
-  static Future<Map<String, dynamic>> delete({required String method,
-    bool isAuth = false,
-    bool testMode = false,
-    Map<String, dynamic>? query}) async {
-    if(_ApiST.instance.baseUrl == null) {
+  static Future<Map<String, dynamic>> delete(
+      {required String method,
+      bool isAuth = false,
+      bool testMode = false,
+      Map<String, dynamic>? query}) async {
+    if (_ApiST.instance.baseUrl == null) {
       throw EticonApiError(
           error: 'Base url not set, use Api.setBaseUrl (String url)');
     }
-    if(isAuth){
-      if(_Token.instance.token == null){
+    if (isAuth) {
+      if (_Token.instance.token == null) {
         throw EticonApiError(
-            error: 'Authentication token is not set, use Api.setToken (String url)');
+            error:
+                'Authentication token is not set, use Api.setToken (String url)');
       }
-      if(_Token.instance.token!.isEmpty){
+      if (_Token.instance.token!.isEmpty) {
         throw EticonApiError(
-            error: 'Authentication token is empty, use Api.setToken (String url)');
+            error:
+                'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await _ApiST.instance.deleteRequest(method: method, isAuth: isAuth, testMode: testMode, query: query);
+    return await _ApiST.instance.deleteRequest(
+        method: method, isAuth: isAuth, testMode: testMode, query: query);
   }
-
 }
 
 ///Token singleton
@@ -158,11 +172,12 @@ class _Token {
 
   ///Init singleton
   static _Token instance = _Token._();
+
   ///Private token
   static String? _t;
 
   ///Get token
-  String ?get token => _t;
+  String? get token => _t;
 
   ///Set token
   void setToken(String t) {
@@ -197,46 +212,46 @@ class _ApiST {
   static bool _enableUtf8Decoding = false;
 
   ///Enable utf-8 decoding
-  void enableUtf8Decoding(bool decoding){
+  void enableUtf8Decoding(bool decoding) {
     _enableUtf8Decoding = decoding;
   }
+
   ///Set base url int singletons
   String? get baseUrl => _baseUrl;
 
   ///Set Headers
-  void setHeaders(Map<String,String> headers){
+  void setHeaders(Map<String, String> headers) {
     _headers = headers;
   }
 
   ///Sets the base URL for processing requests
-  void setBaseUrl(String url){
+  void setBaseUrl(String url) {
     _baseUrl = url;
   }
 
   ///Set globalTestMode
-  void setGlobalTestMode(bool globalTestMode){
+  void setGlobalTestMode(bool globalTestMode) {
     _globalTestMode = globalTestMode;
   }
 
   ///Disable all testMode
-  void disableAllTestMode(bool disableState){
+  void disableAllTestMode(bool disableState) {
     _disableState = disableState;
   }
 
   ///Get no authorization headers
   static Map<String, String> getAuthHeader({required String token}) {
     String tokenMSG = '${_bearerAuth ? 'Bearer ' : ''}$token';
-    if(_headers != null){
+    if (_headers != null) {
       _headers!["Authorization"] = '${_bearerAuth ? 'Bearer ' : ''}$token';
       return _headers!;
     }
-    return {"Authorization": '$tokenMSG',
-      "Content-type": 'application/json'};
+    return {"Authorization": '$tokenMSG', "Content-type": 'application/json'};
   }
 
   ///Get Authorization headers
-  static Map <String, String> get getNoAuthHeader{
-    if(_headers != null){
+  static Map<String, String> get getNoAuthHeader {
+    if (_headers != null) {
       return _headers!;
     }
     return {"Content-type": 'application/json'};
@@ -247,9 +262,9 @@ class _ApiST {
   ///Method HTTP GET
   Future<Map<String, dynamic>> getRequest(
       {required String method,
-        bool isAuth = false,
-        bool testMode = false,
-        Map<String, dynamic>? query}) async {
+      bool isAuth = false,
+      bool testMode = false,
+      Map<String, dynamic>? query}) async {
     // Генерация списка параметром
     List<String> _queryList = [];
     if (query != null)
@@ -262,87 +277,84 @@ class _ApiST {
     if ((testMode || _globalTestMode) && !_disableState) {
       log(_queryList.toString(), name: 'API TEST GET: Query List');
     }
-      //Формирование ссылки запроса
-      Uri url = Uri.parse(_baseUrl! + '$method?${_queryList.join("&")}');
-      if ((testMode || _globalTestMode) && !_disableState) log(url.toString(), name: 'API TEST GET: URL');
-      // Делаем запрос
-      Response response;
-      if ((testMode || _globalTestMode) && !_disableState) {
+    //Формирование ссылки запроса
+    Uri url = Uri.parse(_baseUrl! + '$method?${_queryList.join("&")}');
+    if ((testMode || _globalTestMode) && !_disableState)
+      log(url.toString(), name: 'API TEST GET: URL');
+    // Делаем запрос
+    Response response;
+    if ((testMode || _globalTestMode) && !_disableState) {
+      if (isAuth) {
+        log(_Token.instance.token.toString(), name: 'API TEST GET: Token');
+        log(getAuthHeader(token: _Token.instance.token!).toString(),
+            name: 'API TEST GET: Auth Header');
+        response = await http.get(url,
+            headers: getAuthHeader(token: _Token.instance.token!));
+        // log(response.body);
+      } else {
+        response = await http.get(url, headers: getNoAuthHeader);
+      }
+      log(response.statusCode.toString(), name: 'API TEST GET: Response Code');
+      String responseBody;
+      if (_enableUtf8Decoding) {
+        responseBody = utf8.decode(response.body.runes.toList());
+      } else {
+        responseBody = response.body;
+      }
+      if (response.body[0] == '{') {
+        log(responseBody, name: 'API TEST GET: Response Body');
+      } else {
+        log(json.decode(responseBody).toString(),
+            name: 'API TEST GET: Response Body');
+      }
+    } else {
+      try {
         if (isAuth) {
-          log(_Token.instance.token.toString(), name: 'API TEST GET: Token');
-          log(getAuthHeader(token: _Token.instance.token!).toString(),
-              name: 'API TEST GET: Auth Header');
           response = await http.get(url,
               headers: getAuthHeader(token: _Token.instance.token!));
-          // log(response.body);
         } else {
           response = await http.get(url, headers: getNoAuthHeader);
         }
-        log(response.statusCode.toString(), name: 'API TEST GET: Response Code');
-        String responseBody;
-        if(_enableUtf8Decoding){
-          responseBody = utf8.decode(response.body.runes.toList());
-        }
-        else{
-          responseBody = response.body;
-        }
-        if(response.body[0] == '{'){
-          log(responseBody,
-              name: 'API TEST GET: Response Body');
-        }
-        else{
-          log(json.decode(responseBody).toString(),
-              name: 'API TEST GET: Response Body');
-        }
-
-      } else {
-        try {
-          if (isAuth) {
-            response = await http.get(url,
-                headers: getAuthHeader(token: _Token.instance.token!));
-          } else {
-            response = await http.get(url, headers: getNoAuthHeader);
-          }
-        } catch (err) {
-          // Отсутствие интернета
-          print(err);
-          throw APIException(0);
-        }
-      }
-      // Если все не ок то отправляем код ответа http
-      if (response.statusCode != 200) {
-        throw APIException(response.statusCode);
-      }
-      var responseParams;
-      if(_enableUtf8Decoding){
-        responseParams = json.decode(utf8.decode(response.body.runes.toList()));
-      }
-      else{
-        responseParams = json.decode(response.body);
-      }
-      // Проверка на Map
-      if (responseParams is! Map) {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log('Response body is not a MAP, convert to {\'key\': response.body}',
-              name: 'API TEST GET: MAP Status');
-        }
-        Map<String, dynamic> res = {'key': responseParams};
-        return res;
-      } else {
-        return Map<String, dynamic>.from(responseParams);
+      } catch (err) {
+        // Отсутствие интернета
+        print(err);
+        throw APIException(0);
       }
     }
+    // Если все не ок то отправляем код ответа http
+    if (response.statusCode != 200) {
+      throw APIException(response.statusCode);
+    }
+    var responseParams;
+    if (_enableUtf8Decoding) {
+      responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+    } else {
+      responseParams = json.decode(response.body);
+    }
+    // Проверка на Map
+    if (responseParams is! Map) {
+      if ((testMode || _globalTestMode) && !_disableState) {
+        log('Response body is not a MAP, convert to {\'key\': response.body}',
+            name: 'API TEST GET: MAP Status');
+      }
+      Map<String, dynamic> res = {'key': responseParams};
+      return res;
+    } else {
+      return Map<String, dynamic>.from(responseParams);
+    }
+  }
 
   ///Method HTTP POST
   Future<Map<String, dynamic>> postRequest(
       {required String method,
-        bool isAuth = false,
-        bool testMode = false,
-        required Map<String, dynamic> body}) async {
+      bool isAuth = false,
+      bool testMode = false,
+      required Map<String, dynamic> body}) async {
     //Формирование ссылки запроса
     Uri url = Uri.parse(_baseUrl! + '$method');
     // log(url.toString(), name: 'URL');
-    if ((testMode || _globalTestMode) && !_disableState) log(url.toString(), name: 'API TEST POST: URL');
+    if ((testMode || _globalTestMode) && !_disableState)
+      log(url.toString(), name: 'API TEST POST: URL');
     // Делаем запрос
     Response response;
     if ((testMode || _globalTestMode) && !_disableState) {
@@ -355,8 +367,7 @@ class _ApiST {
             headers: getAuthHeader(token: _Token.instance.token!),
             body: jsonEncode(body));
       } else {
-        log(getNoAuthHeader.toString(),
-            name: 'API TEST POST: NO Auth Header');
+        log(getNoAuthHeader.toString(), name: 'API TEST POST: NO Auth Header');
         log(jsonEncode(body).toString(), name: 'API TEST POST: Body in JSON');
         response = await http.post(url,
             body: jsonEncode(body), headers: getNoAuthHeader);
@@ -365,17 +376,14 @@ class _ApiST {
       }
       log(response.statusCode.toString(), name: 'API TEST POST: Response Code');
       String responseBody;
-      if(_enableUtf8Decoding){
+      if (_enableUtf8Decoding) {
         responseBody = utf8.decode(response.body.runes.toList());
-      }
-      else{
+      } else {
         responseBody = response.body;
       }
-      if(response.body[0] == '{'){
-        log(responseBody,
-            name: 'API TEST GET: Response Body');
-      }
-      else{
+      if (response.body[0] == '{') {
+        log(responseBody, name: 'API TEST GET: Response Body');
+      } else {
         log(json.decode(responseBody).toString(),
             name: 'API TEST GET: Response Body');
       }
@@ -399,10 +407,9 @@ class _ApiST {
       throw APIException(response.statusCode);
     }
     var responseParams;
-    if(_enableUtf8Decoding){
+    if (_enableUtf8Decoding) {
       responseParams = json.decode(utf8.decode(response.body.runes.toList()));
-    }
-    else{
+    } else {
       responseParams = json.decode(response.body);
     }
     // Проверка на Map
@@ -421,12 +428,13 @@ class _ApiST {
   ///Method HTTP PUT
   Future<Map<String, dynamic>> putRequest(
       {required String method,
-        bool isAuth = false,
-        bool testMode = false,
-        required Map<String, dynamic> body}) async {
+      bool isAuth = false,
+      bool testMode = false,
+      required Map<String, dynamic> body}) async {
     //Формирование ссылки запроса
     Uri url = Uri.parse(_baseUrl! + '$method');
-    if ((testMode || _globalTestMode) && !_disableState) log(url.toString(), name: 'API TEST PUT: URL');
+    if ((testMode || _globalTestMode) && !_disableState)
+      log(url.toString(), name: 'API TEST PUT: URL');
     // Делаем запрос
     Response response;
     if ((testMode || _globalTestMode) && !_disableState) {
@@ -446,17 +454,14 @@ class _ApiST {
       log(jsonEncode(body).toString(), name: 'API TEST PUT: Body in JSON');
       log(response.statusCode.toString(), name: 'API TEST PUT: Response Code');
       String responseBody;
-      if(_enableUtf8Decoding){
+      if (_enableUtf8Decoding) {
         responseBody = utf8.decode(response.body.runes.toList());
-      }
-      else{
+      } else {
         responseBody = response.body;
       }
-      if(response.body[0] == '{'){
-        log(responseBody,
-            name: 'API TEST GET: Response Body');
-      }
-      else{
+      if (response.body[0] == '{') {
+        log(responseBody, name: 'API TEST GET: Response Body');
+      } else {
         log(json.decode(responseBody).toString(),
             name: 'API TEST GET: Response Body');
       }
@@ -484,10 +489,9 @@ class _ApiST {
     // Десериализация json
     //var responseParams = json.decode(response.body);
     var responseParams;
-    if(_enableUtf8Decoding){
+    if (_enableUtf8Decoding) {
       responseParams = json.decode(utf8.decode(response.body.runes.toList()));
-    }
-    else{
+    } else {
       responseParams = json.decode(response.body);
     }
     // Проверка на Map
@@ -506,9 +510,9 @@ class _ApiST {
   ///Method HTTP DELETE
   Future<Map<String, dynamic>> deleteRequest(
       {required String method,
-        bool isAuth = false,
-        bool testMode = false,
-        Map<String, dynamic>? query}) async {
+      bool isAuth = false,
+      bool testMode = false,
+      Map<String, dynamic>? query}) async {
     // Генерация списка параметром
     List<String> _queryList = [];
     if (query != null)
@@ -523,7 +527,8 @@ class _ApiST {
 
     //Формирование ссылки запроса
     Uri url = Uri.parse(_baseUrl! + '$method?${_queryList.join("&")}');
-    if ((testMode || _globalTestMode) && !_disableState) log(url.toString(), name: 'API TEST DELETE: URL');
+    if ((testMode || _globalTestMode) && !_disableState)
+      log(url.toString(), name: 'API TEST DELETE: URL');
     // Делаем запрос
     Response response;
     if ((testMode || _globalTestMode) && !_disableState) {
@@ -541,17 +546,14 @@ class _ApiST {
       log(response.statusCode.toString(),
           name: 'API TEST DELETE: Response Code');
       String responseBody;
-      if(_enableUtf8Decoding){
+      if (_enableUtf8Decoding) {
         responseBody = utf8.decode(response.body.runes.toList());
-      }
-      else{
+      } else {
         responseBody = response.body;
       }
-      if(response.body[0] == '{'){
-        log(responseBody,
-            name: 'API TEST GET: Response Body');
-      }
-      else{
+      if (response.body[0] == '{') {
+        log(responseBody, name: 'API TEST GET: Response Body');
+      } else {
         log(json.decode(responseBody).toString(),
             name: 'API TEST GET: Response Body');
       }
@@ -576,10 +578,9 @@ class _ApiST {
 
     // Десериализация json
     var responseParams;
-    if(_enableUtf8Decoding){
+    if (_enableUtf8Decoding) {
       responseParams = json.decode(utf8.decode(response.body.runes.toList()));
-    }
-    else{
+    } else {
       responseParams = json.decode(response.body);
     }
     // Проверка на Map
@@ -594,5 +595,4 @@ class _ApiST {
       return Map<String, dynamic>.from(responseParams);
     }
   }
-
 }
