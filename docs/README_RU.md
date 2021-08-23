@@ -19,3 +19,11 @@ void main(){
 }
 ```
 
+### Заголовки
+
+Для объявления заголовков необходимо использовать метод:
+
+```dart
+  Api.setHeaders({"Content-type": 'application/json'});
+```
+> Изначально параметр ***Content-type*** установлено значение ***application/json***
