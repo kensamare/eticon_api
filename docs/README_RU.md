@@ -1,4 +1,4 @@
-LANGUAGE|english
+[![English](https://img.shields.io/badge/Language-English-blue?style=plastic)](Readme.md)
 
 # ETICON API
 
