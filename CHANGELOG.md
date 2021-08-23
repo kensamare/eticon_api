@@ -1,3 +1,6 @@
+## 1.0.3
+* Add Api initialization method, fix some bugs
+
 ## 1.0.2+1-beta
 * Fix bearer authorization
 

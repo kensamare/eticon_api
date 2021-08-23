@@ -29,6 +29,17 @@ class Api {
     _ApiST.instance.setGlobalTestMode(globalTestMode);
     _ApiST.instance.disableAllTestMode(disableAllTestMode);
     _ApiST.instance.enableUtf8Decoding(enableUtf8Decoding);
+    _ApiST.instance.setBearerMode(bearerToken);
+  }
+
+  ///Checks token storage for emptiness
+  static bool tokenIsNotEmpty() {
+    if (_Token.instance.token != null) {
+      if (_Token.instance.token!.isNotEmpty) {
+        return true;
+      }
+    }
+    return false;
   }
 
   ///Set headers. Default is only "Content-type": application/json
@@ -64,8 +75,7 @@ class Api {
       bool testMode = false,
       Map<String, dynamic>? query}) async {
     if (_ApiST.instance.baseUrl == null) {
-      throw EticonApiError(
-          error: 'Base url not set, use Api.init()');
+      throw EticonApiError(error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
       if (_Token.instance.token == null) {
@@ -90,8 +100,7 @@ class Api {
       bool testMode = false,
       required Map<String, dynamic> body}) async {
     if (_ApiST.instance.baseUrl == null) {
-      throw EticonApiError(
-          error: 'Base url not set, use Api.init()');
+      throw EticonApiError(error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
       if (_Token.instance.token == null) {
@@ -116,8 +125,7 @@ class Api {
       bool testMode = false,
       required Map<String, dynamic> body}) async {
     if (_ApiST.instance.baseUrl == null) {
-      throw EticonApiError(
-          error: 'Base url not set, use Api.init()');
+      throw EticonApiError(error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
       if (_Token.instance.token == null) {
@@ -142,8 +150,7 @@ class Api {
       bool testMode = false,
       Map<String, dynamic>? query}) async {
     if (_ApiST.instance.baseUrl == null) {
-      throw EticonApiError(
-          error: 'Base url not set, use Api.init(String url)');
+      throw EticonApiError(error: 'Base url not set, use Api.init(String url)');
     }
     if (isAuth) {
       if (_Token.instance.token == null) {
