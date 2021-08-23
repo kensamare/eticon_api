@@ -19,6 +19,25 @@ void main(){
 }
 ```
 
+### Методы
+
+| | | |
+|-|-|-|
+|__Bold Key__| Value1 |
+| Normal Key | Value2 |
+
+#### GET
+
+```dart
+Future<void> getRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.get(method: 'product',);
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+
 ### Заголовки
 
 Для объявления заголовков необходимо использовать метод:
@@ -27,4 +46,6 @@ void main(){
   Api.setHeaders({"Content-type": 'application/json'});
 ```
 
-> Если заголовки не установлены то по умолчанию используется заголовок ***Content-type*** : ***application/json***
+> Если заголовки не установлены, то по умолчанию используется заголовок ***Content-type*** : ***application/json***
+
+Обратите внимание!!! что заголовок ***Authorization** добавляется автоматически при авторизированном запросе.
