@@ -27,4 +27,4 @@ void main(){
   Api.setHeaders({"Content-type": 'application/json'});
 ```
 
-> Если заголовки не установлены то по умолчанию ***Content-type*** установлено значение ***application/json***
+> Если заголовки не установлены то по умолчанию используется заголовок ***Content-type*** : ***application/json***
