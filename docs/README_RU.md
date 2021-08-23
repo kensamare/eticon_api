@@ -89,3 +89,37 @@ Future<void> putRequest() async {
 > Если заголовки не установлены, то по умолчанию используется заголовок ***Content-type*** : ***application/json***
 
 Обратите внимание!!! что заголовок ***Authorization** добавляется автоматически при авторизированном запросе.
+
+### Авторизация
+
+Для авторизированных запросов необходимо установить значение токена. Установленное значение будет записано в память устройства.
+
+```dart
+  await Api.setToken('{your_token}');
+```
+
+Получить токен:
+
+```dart
+  Api.token;
+```
+
+При старте приложения, вы можете выгрузить токен записанный в памяти устройства:
+
+```dart
+void main() async {
+  bool tokenLoaded = await Api.loadTokenFromMemory();
+  if(tokenLoaded){
+    print(Api.token);
+  }
+  runApp(MyApp());
+}
+```
+Если вы не используете в токене тип ***Bearer***, то отключите его:
+
+```dart
+void main() async {
+  Api.init(baseUrl: 'https://example.com/', bearerToken: false);
+  runApp(MyApp());
+}
+```
