@@ -35,7 +35,43 @@ void main(){
 ```dart
 Future<void> getRequest() async {
     try{
-      Map<String, dynamic> response = await Api.get(method: 'product',);
+      Map<String, dynamic> response = await Api.get(method: 'product', query: {"id": 5});
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+
+#### POST
+
+```dart
+Future<void> postRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.post(method: 'product', body: {"id": 5});
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+
+#### DELETE
+
+```dart
+Future<void> deleteRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.delete(method: 'product', query: {"id": 5}, isAuth: true);
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+
+#### PUT
+
+```dart
+Future<void> putRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.put(method: 'product', body: {"id": 5}, isAuth: true);
     } on APIException catch(error){
       print('ERROR CODE: ${error.code}');
     }
