@@ -1,143 +1,177 @@
-# Eticon API
-Network package
-Networking package
+<img src="https://user-images.githubusercontent.com/36012868/130392291-52b82b9b-fd52-424b-ba5a-b7630e9cf343.png" data-canonical-src="https://user-images.githubusercontent.com/36012868/130392291-52b82b9b-fd52-424b-ba5a-b7630e9cf343.png" height="200" width=400/>
+
+[![English](https://img.shields.io/badge/Language-Russian-blue?style=plastic)](https://github.com/kensamare/eticon_api/docs/README_RU.md)
+
+# ETICON API
+Package for working with http requests.
 
 ## Usage
 
-First, set the base url:
+### Initialization
+
+First you need to initialize:
+
 ```dart
 void main(){
-  Api.setBaseUrl('https://example.com/');
+  Api.init(baseUrl: 'https://example.com/');
   runApp(MyApp());
 }
 ```
 
-Next, create a function to send requests:
+### Methods
+
+| | | | |
+|-|-|-|-|
+|__Parameters__|__Request type__|__Value__|
+| isAuth | ALL | If the value is ***true***, the request will be authorized |
+| method | ALL | Accepts a string appended to ***baseURL*** |
+| body | POST, PUT | Accepts request body in ***Map*** |
+| query | GET, DELETE | Accepts query in ***Map*** |
+| testMode| ALL | if ***true*** shows detailed information about the request |
+
+#### GET
+
 ```dart
 Future<void> getRequest() async {
     try{
-      Map<String, dynamic> response = await Api.get(method: 'product',);
+      Map<String, dynamic> response = await Api.get(method: 'product', query: {"id": 5});
     } on APIException catch(error){
       print('ERROR CODE: ${error.code}');
     }
   }
-  ```
+```
 
-To set headers use Api.setHeaders. Please note that on an authorized request, the header "Authorization" will be automatically added. Default headers is only "Content-type": 'application/json', if you want to change them use the described method.
+#### POST
+
 ```dart
-void main() async {
-  bool tokenLoaded = await Api.loadTokenFromMemory();
-  if(tokenLoaded){
-    print(Api.token);
+Future<void> postRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.post(method: 'product', body: {"id": 5});
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
   }
-  Api.setBaseUrl('https://example.com/');
+```
+
+#### DELETE
+
+```dart
+Future<void> deleteRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.delete(method: 'product', query: {"id": 5}, isAuth: true);
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+
+#### PUT
+
+```dart
+Future<void> putRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.put(method: 'product', body: {"id": 5}, isAuth: true);
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+
+### Headers
+
+To declare headers, you must use the method:
+```dart
   Api.setHeaders({"Content-type": 'application/json'});
-  runApp(MyApp());
-}
 ```
-Available methods:
-  * get
-  * post
-  * put
-  * delete
 
-## Authorizathion Token
+> If no headers are set then the default is ***Content-type***: ***application / json***
 
+Note!!! that the ***Authorization*** header is added automatically on an authorized request.
 
-For authorized requests, you need to set a token. The token will also be written to the device memory:
+### Authorization
+
+For authorized requests, you need to set the token value. The set value will be written to the device memory.
+
 ```dart
-await Api.setToken('{your_token}');
+  await Api.setToken('{your_token}');
 ```
 
-Getting a written token:
+Get a token:
+
 ```dart
-Api.token;
+  Api.token;
 ```
 
-At the start of the application, you can unload the recorded token into the device memory, for example, so as not to re-authorize:
+When the application starts, you can unload the token recorded in the device's memory:
+
 ```dart
 void main() async {
   bool tokenLoaded = await Api.loadTokenFromMemory();
   if(tokenLoaded){
     print(Api.token);
   }
-  Api.setBaseUrl('https://example.com/');
+  runApp(MyApp());
+}
+```
+If you do not use the ***Bearer*** type in the token, then disable it:
+
+```dart
+void main() async {
+  Api.init(baseUrl: 'https://example.com/', bearerToken: false);
   runApp(MyApp());
 }
 ```
 
-To send an authorized request, you just need to set the isAuth parameter to true:
+### Test Mode
+
+Test Mode is a handy tool for developing an application that shows complete information about the request (parameters, full URL, response body, etc.). In addition, this feature disables all error handlers. Test mode can be set globally for all requests in the project:
+
+```dart
+void main() async {
+  Api.init(baseUrl: 'https://example.com/', globalTestMode: true);
+  runApp(MyApp());
+}
+
+```
+And on a separate request:
+
 ```dart
 Future<void> getRequest() async {
     try{
-      Map<String, dynamic> response = await Api.post(method: 'send', body:{'count': 1}, isAuth: true);
+      Map<String, dynamic> response = await Api.get(method: 'product', isAuth: true, testMode: true);
     } on APIException catch(error){
       print('ERROR CODE: ${error.code}');
     }
   }
-  ```
-If you are using a non-Bearer token use the following:
+
+```
+
+To disable test mode in the whole project, you can use ***disableAllTestMode***:
+
 ```dart
 void main() async {
-  bool tokenLoaded = await Api.loadTokenFromMemory();
-  if(tokenLoaded){
-    print(Api.token);
-  }
-  Api.setBaseUrl('https://example.com/');
-  Api.bearerToken(false);
+  Api.init(
+    baseUrl: 'https://example.com/', 
+    globalTestMode: true, // Will be ignored
+    disableAllTestMode: true,
+  );
   runApp(MyApp());
 }
 ```
 
-## Test Mode
-Test mode is a handy tool for application development that shows complete information about the request (parameters, full url, response body, etc.). Also, this function disables all error handlers. 
-Test mode can be set both globally for all requests in the project:
-```dart
-void main() async {
-  bool tokenLoaded = await Api.loadTokenFromMemory();
-  if(tokenLoaded){
-    print(Api.token);
-  }
-  Api.setBaseUrl('https://example.com/');
-  Api.globalTestMode(true);
-  runApp(MyApp());
-}
-```
-
-And for an individual request:
-```dart
-Future<void> getRequest() async {
-    try{
-      Map<String, dynamic> response = await Api.put(method: 'user/update', body:{'first_name': 'Andrew'}, isAuth: true, testMode: true);
-    } on APIException catch(error){
-      print('ERROR CODE: ${error.code}');
-    }
-  }
-```
-To disable everything in the test mode in the project, you can use disableAllTestMode:
-```dart
-void main() async {
-  bool tokenLoaded = await Api.loadTokenFromMemory();
-  if(tokenLoaded){
-    print(Api.token);
-  }
-  Api.setBaseUrl('https://example.com/');
-  Api.globalTestMode(true); // Will be ignored
-  Api.disableAllTestMode(true);
-  runApp(MyApp());
-}
-```
-## UTF-8 Decoding
+### Decoding UTF-8
 
 There is built-in support for decoding in response to utf-8
+
 ```dart
 void main() async {
-  Api.setBaseUrl('https://example.com/');
-  Api.enableUtf8Decoding(true);
+  Api.init(
+    baseUrl: 'https://example.com/', 
+    ebableUtf8Decoding: true,
+  );
   runApp(MyApp());
 }
 ```
-
 
 ## Getting Started
 
