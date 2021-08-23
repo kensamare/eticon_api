@@ -9,34 +9,26 @@ import 'package:http/http.dart' show Response;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Api {
-  ///Sets the base url for requests to work
-  static void setBaseUrl(String url) {
-    if (url.isEmpty) {
+  ///Initialization API class
+  static void init(
+      {required String baseUrl,
+      bool globalTestMode = false,
+      bool bearerToken = true,
+      disableAllTestMode = false,
+      bool enableUtf8Decoding = false}) {
+    if (!_ApiST.instance.setInitState(true)) {
+      throw EticonApiError(error: 'API class already initialization');
+    }
+    if (baseUrl.isEmpty) {
       throw EticonApiError(error: 'URL is empty');
     }
-    if (!url.startsWith('https') || !url.startsWith('http'))
+    if (!baseUrl.startsWith('https') || !baseUrl.startsWith('http'))
       throw EticonApiError(error: 'The url should start with https or http');
-    if (url[url.length - 1] != '/') url += '/';
-    _ApiST.instance.setBaseUrl(url);
-  }
-
-  ///All requests that exist in the project will work in test mode
-  static void globalTestMode(bool globalTestMode) {
+    if (baseUrl[baseUrl.length - 1] != '/') baseUrl += '/';
+    _ApiST.instance.setBaseUrl(baseUrl);
     _ApiST.instance.setGlobalTestMode(globalTestMode);
-  }
-
-  static void bearerToken(bool mode) {
-    _ApiST.instance.setBearerMode(mode);
-  }
-
-  ///Disable test mode completely for all requests existing in the project
-  static void disableAllTestMode(bool disableState) {
-    _ApiST.instance.disableAllTestMode(disableState);
-  }
-
-  ///Set true to enable Utf-8 decoding
-  static void enableUtf8Decoding(bool enable) {
-    _ApiST.instance.enableUtf8Decoding(enable);
+    _ApiST.instance.disableAllTestMode(disableAllTestMode);
+    _ApiST.instance.enableUtf8Decoding(enableUtf8Decoding);
   }
 
   ///Set headers. Default is only "Content-type": application/json
@@ -73,7 +65,7 @@ class Api {
       Map<String, dynamic>? query}) async {
     if (_ApiST.instance.baseUrl == null) {
       throw EticonApiError(
-          error: 'Base url not set, use Api.setBaseUrl (String url)');
+          error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
       if (_Token.instance.token == null) {
@@ -99,7 +91,7 @@ class Api {
       required Map<String, dynamic> body}) async {
     if (_ApiST.instance.baseUrl == null) {
       throw EticonApiError(
-          error: 'Base url not set, use Api.setBaseUrl (String url)');
+          error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
       if (_Token.instance.token == null) {
@@ -125,7 +117,7 @@ class Api {
       required Map<String, dynamic> body}) async {
     if (_ApiST.instance.baseUrl == null) {
       throw EticonApiError(
-          error: 'Base url not set, use Api.setBaseUrl (String url)');
+          error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
       if (_Token.instance.token == null) {
@@ -151,7 +143,7 @@ class Api {
       Map<String, dynamic>? query}) async {
     if (_ApiST.instance.baseUrl == null) {
       throw EticonApiError(
-          error: 'Base url not set, use Api.setBaseUrl (String url)');
+          error: 'Base url not set, use Api.init(String url)');
     }
     if (isAuth) {
       if (_Token.instance.token == null) {
@@ -198,6 +190,9 @@ class _ApiST {
   ///Init singleton
   static _ApiST instance = _ApiST._();
 
+  ///Init state of API class
+  static bool _init = false;
+
   ///Base url int singletons
   static String? _baseUrl;
 
@@ -215,6 +210,14 @@ class _ApiST {
 
   ///Enable utf-8 decoding
   static bool _enableUtf8Decoding = false;
+
+  bool setInitState(bool initState) {
+    if (_init) {
+      return false;
+    }
+    _init = true;
+    return true;
+  }
 
   ///Set Bearer token mode
   void setBearerMode(bool mode) {

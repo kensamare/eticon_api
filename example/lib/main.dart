@@ -1,13 +1,11 @@
-import 'package:eticon_api/api_errors.dart';
-import 'package:eticon_api/eticon_api.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
+  Api.init(baseUrl);
   bool tokenLoaded = await Api.loadTokenFromMemory();
   if (tokenLoaded) {
     print(Api.token);
   }
-  Api.setBaseUrl('https://example.com/');
   runApp(MyApp());
 }
 
