@@ -26,4 +26,5 @@ void main(){
 ```dart
   Api.setHeaders({"Content-type": 'application/json'});
 ```
-> Изначально параметр ***Content-type*** установлено значение ***application/json***
+
+> Если заголовки не установлены то по умолчанию ***Content-type*** установлено значение ***application/json***
