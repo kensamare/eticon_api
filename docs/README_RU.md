@@ -123,3 +123,54 @@ void main() async {
   runApp(MyApp());
 }
 ```
+
+### Test Mode
+
+Режим тестирования - это удобный инструмент для разработки приложения, который показывает полную информацию о запросе (параметры, полный URL-адрес, тело ответа и т. д.). Кроме того, эта функция отключает все обработчики ошибок. Тестовый режим можно установить как глобально для всех запросов в проекте:
+
+```dart
+void main() async {
+  Api.init(baseUrl: 'https://example.com/', globalTestMode: true);
+  runApp(MyApp());
+}
+
+```
+И по отдельному запросу:
+
+```dart
+Future<void> getRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.get(method: 'product', isAuth: true, testMode: true);
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+
+```
+
+Чтобы отключить все в тестовом режиме в проекте, вы можете использовать ***disableAllTestMode***:
+
+```dart
+void main() async {
+  Api.init(
+    baseUrl: 'https://example.com/', 
+    globalTestMode: true, // Will be ignored
+    disableAllTestMode: true,
+  );
+  runApp(MyApp());
+}
+```
+
+### Расшифровка UTF-8
+
+Существует встроенная поддержка декодирования в ответ на utf-8
+
+```dart
+void main() async {
+  Api.init(
+    baseUrl: 'https://example.com/', 
+    ebableUtf8Decoding: true,
+  );
+  runApp(MyApp());
+}
+```
