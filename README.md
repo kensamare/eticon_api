@@ -5,9 +5,7 @@
 # ETICON API
 Package for working with http requests.
 
-## Usage
-
-### Initialization
+## Initialization
 
 First you need to initialize:
 
@@ -18,7 +16,7 @@ void main(){
 }
 ```
 
-### Methods
+## Methods
 
 | | | | |
 |-|-|-|-|
@@ -29,7 +27,7 @@ void main(){
 | query | GET, DELETE | Accepts query in ***Map*** |
 | testMode| ALL | if ***true*** shows detailed information about the request |
 
-#### GET
+### GET
 
 ```dart
 Future<void> getRequest() async {
@@ -41,7 +39,7 @@ Future<void> getRequest() async {
   }
 ```
 
-#### POST
+### POST
 
 ```dart
 Future<void> postRequest() async {
@@ -53,7 +51,7 @@ Future<void> postRequest() async {
   }
 ```
 
-#### DELETE
+### DELETE
 
 ```dart
 Future<void> deleteRequest() async {
@@ -65,7 +63,7 @@ Future<void> deleteRequest() async {
   }
 ```
 
-#### PUT
+### PUT
 
 ```dart
 Future<void> putRequest() async {
@@ -77,7 +75,7 @@ Future<void> putRequest() async {
   }
 ```
 
-### Headers
+## Headers
 
 To declare headers, you must use the method:
 ```dart
@@ -88,7 +86,7 @@ To declare headers, you must use the method:
 
 Note!!! that the ***Authorization*** header is added automatically on an authorized request.
 
-### Authorization
+## Authorization
 
 For authorized requests, you need to set the token value. The set value will be written to the device memory.
 
@@ -122,7 +120,7 @@ void main() async {
 }
 ```
 
-### Test Mode
+## Test Mode
 
 Test Mode is a handy tool for developing an application that shows complete information about the request (parameters, full URL, response body, etc.). In addition, this feature disables all error handlers. Test mode can be set globally for all requests in the project:
 
@@ -159,7 +157,7 @@ void main() async {
 }
 ```
 
-### Decoding UTF-8
+## Decoding UTF-8
 
 There is built-in support for decoding in response to utf-8
 
