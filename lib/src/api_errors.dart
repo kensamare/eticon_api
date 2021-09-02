@@ -1,5 +1,5 @@
 ///Main Api error class
-class EticonApiError extends Error {
+class EticonApiError implements Exception {
   ///Error String
   String error;
 
@@ -20,15 +20,14 @@ class APIException implements Exception {
   ///Error code
   int code;
 
-  ///Error message
-  String? message;
+  ///Error body
+  dynamic body;
 
-  APIException(this.code, [this.message]);
+  APIException(this.code, {this.body});
 
   ///GetError
   @override
   String toString() {
-    print(message);
-    return '$code ${message ?? ""}';
+    return 'Error code: $code \nError body: ${body.toString()}';
   }
 }
