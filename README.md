@@ -74,6 +74,10 @@ Future<void> putRequest() async {
     }
   }
 ```
+## HTTP status codes
+
+If the result of the status code in the response is not 200, then ** APIException ** will be thrown. It contains the status code as well as the response body.
+In case there are problems with the Internet connection, ** APIException ** will return code 0, if there is no Internet connection. Code 1, for other connection errors.
 
 ## Headers
 
