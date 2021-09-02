@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'api_errors.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart' show Response;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class n{}
 
 class Api {
   ///Initialization API class
@@ -303,44 +303,63 @@ class _ApiST {
       log(url.toString(), name: 'API TEST GET: URL');
     // Делаем запрос
     Response response;
-    if ((testMode || _globalTestMode) && !_disableState) {
+    // if ((testMode || _globalTestMode) && !_disableState) {
+    try {
       if (isAuth) {
-        log(_Token.instance.token.toString(), name: 'API TEST GET: Token');
-        log(getAuthHeader(token: _Token.instance.token!).toString(),
-            name: 'API TEST GET: Auth Header');
+        if ((testMode || _globalTestMode) && !_disableState) {
+          log(_Token.instance.token.toString(), name: 'API TEST GET: Token');
+          log(getAuthHeader(token: _Token.instance.token!).toString(),
+              name: 'API TEST GET: Auth Header');
+        }
         response = await http.get(url,
             headers: getAuthHeader(token: _Token.instance.token!));
         // log(response.body);
       } else {
+        if ((testMode || _globalTestMode) && !_disableState) {
+          log(getNoAuthHeader.toString(),
+              name: 'API TEST POST: NO Auth Header');
+        }
         response = await http.get(url, headers: getNoAuthHeader);
       }
-      log(response.statusCode.toString(), name: 'API TEST GET: Response Code');
-      String responseBody;
-      if (_enableUtf8Decoding) {
-        responseBody = utf8.decode(response.body.runes.toList());
-      } else {
-        responseBody = response.body;
-      }
-      if (response.body[0] == '{') {
-        log(responseBody, name: 'API TEST GET: Response Body');
-      } else {
-        log(json.decode(responseBody).toString(),
-            name: 'API TEST GET: Response Body');
-      }
-    } else {
-      try {
-        if (isAuth) {
-          response = await http.get(url,
-              headers: getAuthHeader(token: _Token.instance.token!));
+      if ((testMode || _globalTestMode) && !_disableState) {
+        log(response.statusCode.toString(),
+            name: 'API TEST GET: Response Code');
+        String responseBody;
+        if (_enableUtf8Decoding) {
+          responseBody = utf8.decode(response.body.runes.toList());
         } else {
-          response = await http.get(url, headers: getNoAuthHeader);
+          responseBody = response.body;
         }
-      } catch (err) {
-        // Отсутствие интернета
-        print(err);
-        throw APIException(0);
+        if (response.body[0] == '{') {
+          log(responseBody, name: 'API TEST GET: Response Body');
+        } else {
+          log(json.decode(responseBody).toString(),
+              name: 'API TEST GET: Response Body');
+        }
       }
+    } catch (error) {
+      if(error is SocketException){
+        if(error.osError != null)
+          if(error.osError!.errorCode == 7){
+            throw APIException(0);
+        }
+      }
+      throw APIException(1);
     }
+    // } else {
+    //   try {
+    //     if (isAuth) {
+    //       response = await http.get(url,
+    //           headers: getAuthHeader(token: _Token.instance.token!));
+    //     } else {
+    //       response = await http.get(url, headers: getNoAuthHeader);
+    //     }
+    //   } catch (err) {
+    //     // Отсутствие интернета
+    //     print(err);
+    //     throw APIException(0);
+    //   }
+    // }
     // Если все не ок то отправляем код ответа http
     if (response.statusCode != 200) {
       throw APIException(response.statusCode, body: response.body);
@@ -416,8 +435,14 @@ class _ApiST {
               name: 'API TEST GET: Response Body');
         }
       }
-    } catch (error){
-      throw APIException(0);
+    } catch (error) {
+      if(error is SocketException){
+        if(error.osError != null)
+          if(error.osError!.errorCode == 7){
+            throw APIException(0);
+          }
+      }
+      throw APIException(1);
     }
 
     //  } else {
@@ -470,49 +495,67 @@ class _ApiST {
       log(url.toString(), name: 'API TEST PUT: URL');
     // Делаем запрос
     Response response;
-    if ((testMode || _globalTestMode) && !_disableState) {
+    // if ((testMode || _globalTestMode) && !_disableState) {
+    try {
       if (isAuth) {
-        log(_Token.instance.token.toString(), name: 'API TEST PUT: Token');
-        log(getAuthHeader(token: _Token.instance.token!).toString(),
-            name: 'API TEST PUT: Auth Header');
+        if ((testMode || _globalTestMode) && !_disableState) {
+          log(_Token.instance.token.toString(), name: 'API TEST PUT: Token');
+          log(getAuthHeader(token: _Token.instance.token!).toString(),
+              name: 'API TEST PUT: Auth Header');
+        }
         response = await http.put(url,
             headers: getAuthHeader(token: _Token.instance.token!),
             body: jsonEncode(body));
         // log('Ответ put ${response.statusCode} - ${response.body}');
       } else {
-        log(getNoAuthHeader.toString(), name: 'API TEST PUT: NO Auth Header');
-        response = await http.put(url,
-            body: jsonEncode(body), headers: getNoAuthHeader);
-      }
-      log(jsonEncode(body).toString(), name: 'API TEST PUT: Body in JSON');
-      log(response.statusCode.toString(), name: 'API TEST PUT: Response Code');
-      String responseBody;
-      if (_enableUtf8Decoding) {
-        responseBody = utf8.decode(response.body.runes.toList());
-      } else {
-        responseBody = response.body;
-      }
-      if (response.body[0] == '{') {
-        log(responseBody, name: 'API TEST GET: Response Body');
-      } else {
-        log(json.decode(responseBody).toString(),
-            name: 'API TEST GET: Response Body');
-      }
-    } else {
-      try {
-        if (isAuth) {
-          response = await http.put(url,
-              headers: getAuthHeader(token: _Token.instance.token!),
-              body: jsonEncode(body));
-        } else {
-          response = await http.put(url,
-              body: jsonEncode(body), headers: getNoAuthHeader);
+        if ((testMode || _globalTestMode) && !_disableState) {
+          log(getNoAuthHeader.toString(), name: 'API TEST PUT: NO Auth Header');
         }
-      } catch (err) {
-        // Отсутствие интернета
-        throw APIException(0);
+        response =
+        await http.put(url, body: jsonEncode(body), headers: getNoAuthHeader);
       }
+      if ((testMode || _globalTestMode) && !_disableState) {
+        log(jsonEncode(body).toString(), name: 'API TEST PUT: Body in JSON');
+        log(response.statusCode.toString(),
+            name: 'API TEST PUT: Response Code');
+        String responseBody;
+        if (_enableUtf8Decoding) {
+          responseBody = utf8.decode(response.body.runes.toList());
+        } else {
+          responseBody = response.body;
+        }
+        if (response.body[0] == '{') {
+          log(responseBody, name: 'API TEST GET: Response Body');
+        } else {
+          log(json.decode(responseBody).toString(),
+              name: 'API TEST GET: Response Body');
+        }
+      }
+    } catch (error) {
+      if(error is SocketException){
+        if(error.osError != null)
+          if(error.osError!.errorCode == 7){
+            throw APIException(0);
+          }
+      }
+      throw APIException(1);
     }
+
+    // } else {
+    //   try {
+    //     if (isAuth) {
+    //       response = await http.put(url,
+    //           headers: getAuthHeader(token: _Token.instance.token!),
+    //           body: jsonEncode(body));
+    //     } else {
+    //       response = await http.put(url,
+    //           body: jsonEncode(body), headers: getNoAuthHeader);
+    //     }
+    //   } catch (err) {
+    //     // Отсутствие интернета
+    //     throw APIException(0);
+    //   }
+    // }
 
     // Если все не ок то отправляем код ответа http
     if (response.statusCode != 200) {
@@ -564,45 +607,63 @@ class _ApiST {
       log(url.toString(), name: 'API TEST DELETE: URL');
     // Делаем запрос
     Response response;
-    if ((testMode || _globalTestMode) && !_disableState) {
-      if (isAuth) {
-        log(_Token.instance.token.toString(), name: 'API TEST DELETE: Token');
-        log(getAuthHeader(token: _Token.instance.token!).toString(),
-            name: 'API TEST DELETE: Auth Header');
-        response = await http.delete(url,
-            headers: getAuthHeader(token: _Token.instance.token!));
-      } else {
-        log(getAuthHeader(token: _Token.instance.token!).toString(),
-            name: 'API TEST DELETE: Auth Header');
-        response = await http.delete(url, headers: getNoAuthHeader);
-      }
-      log(response.statusCode.toString(),
-          name: 'API TEST DELETE: Response Code');
-      String responseBody;
-      if (_enableUtf8Decoding) {
-        responseBody = utf8.decode(response.body.runes.toList());
-      } else {
-        responseBody = response.body;
-      }
-      if (response.body[0] == '{') {
-        log(responseBody, name: 'API TEST GET: Response Body');
-      } else {
-        log(json.decode(responseBody).toString(),
-            name: 'API TEST GET: Response Body');
-      }
-    } else {
-      try {
-        if (isAuth) {
-          response = await http.delete(url,
-              headers: getAuthHeader(token: _Token.instance.token!));
-        } else {
-          response = await http.delete(url, headers: getNoAuthHeader);
-        }
-      } catch (err) {
-        // Отсутствие интернета
-        throw APIException(0);
-      }
-    }
+  //  if ((testMode || _globalTestMode) && !_disableState) {
+     try {
+       if (isAuth) {
+         if ((testMode || _globalTestMode) && !_disableState) {
+           log(_Token.instance.token.toString(),
+               name: 'API TEST DELETE: Token');
+           log(getAuthHeader(token: _Token.instance.token!).toString(),
+               name: 'API TEST DELETE: Auth Header');
+         }
+         response = await http.delete(url,
+             headers: getAuthHeader(token: _Token.instance.token!));
+       } else {
+         if ((testMode || _globalTestMode) && !_disableState) {
+           log(getAuthHeader(token: _Token.instance.token!).toString(),
+               name: 'API TEST DELETE: Auth Header');
+         }
+         response = await http.delete(url, headers: getNoAuthHeader);
+       }
+       if ((testMode || _globalTestMode) && !_disableState) {
+         log(response.statusCode.toString(),
+             name: 'API TEST DELETE: Response Code');
+         String responseBody;
+         if (_enableUtf8Decoding) {
+           responseBody = utf8.decode(response.body.runes.toList());
+         } else {
+           responseBody = response.body;
+         }
+         if (response.body[0] == '{') {
+           log(responseBody, name: 'API TEST GET: Response Body');
+         } else {
+           log(json.decode(responseBody).toString(),
+               name: 'API TEST GET: Response Body');
+         }
+       }
+     } catch (error) {
+       if(error is SocketException){
+         if(error.osError != null)
+           if(error.osError!.errorCode == 7){
+             throw APIException(0);
+           }
+       }
+       throw APIException(1);
+     }
+
+    // } else {
+    //   try {
+    //     if (isAuth) {
+    //       response = await http.delete(url,
+    //           headers: getAuthHeader(token: _Token.instance.token!));
+    //     } else {
+    //       response = await http.delete(url, headers: getNoAuthHeader);
+    //     }
+    //   } catch (err) {
+    //     // Отсутствие интернета
+    //     throw APIException(0);
+    //   }
+    // }
 
     // Если все не ок то отправляем код ответа http
     if (response.statusCode != 200) {

@@ -5,9 +5,10 @@ class EticonApiError implements Exception {
 
   EticonApiError({required this.error});
 
+  @override
   String toString() {
     var message = this.error;
-    return "$message";
+    return "\n[EticonApiError]: $message";
   }
 
   ///Get error
@@ -28,6 +29,6 @@ class APIException implements Exception {
   ///GetError
   @override
   String toString() {
-    return 'Error code: $code \nError body: ${body.toString()}';
+    return '\n[APIException] Error code: $code Error body: ${body.toString()}';
   }
 }
