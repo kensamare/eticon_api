@@ -1,3 +1,9 @@
+## 1.1.0
+* Update all error class
+* Now errors with the Internet connection are triggered even when testMode is enabled
+* Updated package structure
+* Update Readme, added errors information
+
 ## 1.0.3+1
 * Edit Readme
 

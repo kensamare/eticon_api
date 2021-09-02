@@ -341,10 +341,10 @@ class _ApiST {
       if(error is SocketException){
         if(error.osError != null)
           if(error.osError!.errorCode == 7){
-            throw APIException(0);
+            throw APIException(0, body: 'No Internet connection');
         }
       }
-      throw APIException(1);
+      throw APIException(1, body: error.toString());
     }
     // } else {
     //   try {
@@ -439,10 +439,10 @@ class _ApiST {
       if(error is SocketException){
         if(error.osError != null)
           if(error.osError!.errorCode == 7){
-            throw APIException(0);
+            throw APIException(0, body: 'No Internet connection');
           }
       }
-      throw APIException(1);
+      throw APIException(1, body: error.toString());
     }
 
     //  } else {
@@ -535,10 +535,10 @@ class _ApiST {
       if(error is SocketException){
         if(error.osError != null)
           if(error.osError!.errorCode == 7){
-            throw APIException(0);
+            throw APIException(0, body: 'No Internet connection');
           }
       }
-      throw APIException(1);
+      throw APIException(1, body: error.toString());
     }
 
     // } else {
@@ -645,10 +645,10 @@ class _ApiST {
        if(error is SocketException){
          if(error.osError != null)
            if(error.osError!.errorCode == 7){
-             throw APIException(0);
+             throw APIException(0, body: 'No Internet connection');
            }
        }
-       throw APIException(1);
+       throw APIException(1, body: error.toString());
      }
 
     // } else {

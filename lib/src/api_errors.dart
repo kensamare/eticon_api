@@ -29,6 +29,6 @@ class APIException implements Exception {
   ///GetError
   @override
   String toString() {
-    return '\n[APIException] Error code: $code Error body: ${body.toString()}';
+    return '\n[APIException] Error code: $code, Error body: ${body.toString()}';
   }
 }
