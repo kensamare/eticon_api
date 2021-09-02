@@ -1,3 +1,6 @@
+## 1.1.1
+* Fix some bugs
+
 ## 1.1.0
 * Update all error class
 * Now errors with the Internet connection are triggered even when testMode is enabled

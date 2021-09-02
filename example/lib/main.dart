@@ -1,4 +1,3 @@
-import 'package:eticon_api/api_errors.dart';
 import 'package:eticon_api/eticon_api.dart';
 import 'package:flutter/material.dart';
 

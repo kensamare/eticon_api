@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart' show Response;
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class Api {
   ///Initialization API class
   static void init(
@@ -338,10 +337,9 @@ class _ApiST {
         }
       }
     } catch (error) {
-      if(error is SocketException){
-        if(error.osError != null)
-          if(error.osError!.errorCode == 7){
-            throw APIException(0, body: 'No Internet connection');
+      if (error is SocketException) {
+        if (error.osError != null) if (error.osError!.errorCode == 7) {
+          throw APIException(0, body: 'No Internet connection');
         }
       }
       throw APIException(1, body: error.toString());
@@ -436,11 +434,10 @@ class _ApiST {
         }
       }
     } catch (error) {
-      if(error is SocketException){
-        if(error.osError != null)
-          if(error.osError!.errorCode == 7){
-            throw APIException(0, body: 'No Internet connection');
-          }
+      if (error is SocketException) {
+        if (error.osError != null) if (error.osError!.errorCode == 7) {
+          throw APIException(0, body: 'No Internet connection');
+        }
       }
       throw APIException(1, body: error.toString());
     }
@@ -511,8 +508,8 @@ class _ApiST {
         if ((testMode || _globalTestMode) && !_disableState) {
           log(getNoAuthHeader.toString(), name: 'API TEST PUT: NO Auth Header');
         }
-        response =
-        await http.put(url, body: jsonEncode(body), headers: getNoAuthHeader);
+        response = await http.put(url,
+            body: jsonEncode(body), headers: getNoAuthHeader);
       }
       if ((testMode || _globalTestMode) && !_disableState) {
         log(jsonEncode(body).toString(), name: 'API TEST PUT: Body in JSON');
@@ -532,11 +529,10 @@ class _ApiST {
         }
       }
     } catch (error) {
-      if(error is SocketException){
-        if(error.osError != null)
-          if(error.osError!.errorCode == 7){
-            throw APIException(0, body: 'No Internet connection');
-          }
+      if (error is SocketException) {
+        if (error.osError != null) if (error.osError!.errorCode == 7) {
+          throw APIException(0, body: 'No Internet connection');
+        }
       }
       throw APIException(1, body: error.toString());
     }
@@ -607,49 +603,47 @@ class _ApiST {
       log(url.toString(), name: 'API TEST DELETE: URL');
     // Делаем запрос
     Response response;
-  //  if ((testMode || _globalTestMode) && !_disableState) {
-     try {
-       if (isAuth) {
-         if ((testMode || _globalTestMode) && !_disableState) {
-           log(_Token.instance.token.toString(),
-               name: 'API TEST DELETE: Token');
-           log(getAuthHeader(token: _Token.instance.token!).toString(),
-               name: 'API TEST DELETE: Auth Header');
-         }
-         response = await http.delete(url,
-             headers: getAuthHeader(token: _Token.instance.token!));
-       } else {
-         if ((testMode || _globalTestMode) && !_disableState) {
-           log(getAuthHeader(token: _Token.instance.token!).toString(),
-               name: 'API TEST DELETE: Auth Header');
-         }
-         response = await http.delete(url, headers: getNoAuthHeader);
-       }
-       if ((testMode || _globalTestMode) && !_disableState) {
-         log(response.statusCode.toString(),
-             name: 'API TEST DELETE: Response Code');
-         String responseBody;
-         if (_enableUtf8Decoding) {
-           responseBody = utf8.decode(response.body.runes.toList());
-         } else {
-           responseBody = response.body;
-         }
-         if (response.body[0] == '{') {
-           log(responseBody, name: 'API TEST GET: Response Body');
-         } else {
-           log(json.decode(responseBody).toString(),
-               name: 'API TEST GET: Response Body');
-         }
-       }
-     } catch (error) {
-       if(error is SocketException){
-         if(error.osError != null)
-           if(error.osError!.errorCode == 7){
-             throw APIException(0, body: 'No Internet connection');
-           }
-       }
-       throw APIException(1, body: error.toString());
-     }
+    //  if ((testMode || _globalTestMode) && !_disableState) {
+    try {
+      if (isAuth) {
+        if ((testMode || _globalTestMode) && !_disableState) {
+          log(_Token.instance.token.toString(), name: 'API TEST DELETE: Token');
+          log(getAuthHeader(token: _Token.instance.token!).toString(),
+              name: 'API TEST DELETE: Auth Header');
+        }
+        response = await http.delete(url,
+            headers: getAuthHeader(token: _Token.instance.token!));
+      } else {
+        if ((testMode || _globalTestMode) && !_disableState) {
+          log(getAuthHeader(token: _Token.instance.token!).toString(),
+              name: 'API TEST DELETE: Auth Header');
+        }
+        response = await http.delete(url, headers: getNoAuthHeader);
+      }
+      if ((testMode || _globalTestMode) && !_disableState) {
+        log(response.statusCode.toString(),
+            name: 'API TEST DELETE: Response Code');
+        String responseBody;
+        if (_enableUtf8Decoding) {
+          responseBody = utf8.decode(response.body.runes.toList());
+        } else {
+          responseBody = response.body;
+        }
+        if (response.body[0] == '{') {
+          log(responseBody, name: 'API TEST GET: Response Body');
+        } else {
+          log(json.decode(responseBody).toString(),
+              name: 'API TEST GET: Response Body');
+        }
+      }
+    } catch (error) {
+      if (error is SocketException) {
+        if (error.osError != null) if (error.osError!.errorCode == 7) {
+          throw APIException(0, body: 'No Internet connection');
+        }
+      }
+      throw APIException(1, body: error.toString());
+    }
 
     // } else {
     //   try {
