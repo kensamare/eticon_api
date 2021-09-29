@@ -21,7 +21,7 @@ class Api {
     if (baseUrl.isEmpty) {
       throw EticonApiError(error: 'URL is empty');
     }
-    if (!baseUrl.startsWith('https') || !baseUrl.startsWith('http'))
+    if (!baseUrl.startsWith('http'))
       throw EticonApiError(error: 'The url should start with https or http');
     if (baseUrl[baseUrl.length - 1] != '/') baseUrl += '/';
     _ApiST.instance.setBaseUrl(baseUrl);
@@ -33,10 +33,8 @@ class Api {
 
   ///Checks token storage for emptiness
   static bool tokenIsNotEmpty() {
-    if (_Token.instance.token != null) {
-      if (_Token.instance.token!.isNotEmpty) {
-        return true;
-      }
+    if (_Token.instance.token.isNotEmpty) {
+      return true;
     }
     return false;
   }
@@ -77,12 +75,7 @@ class Api {
       throw EticonApiError(error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
-      if (_Token.instance.token == null) {
-        throw EticonApiError(
-            error:
-                'Authentication token is not set, use Api.setToken (String url)');
-      }
-      if (_Token.instance.token!.isEmpty) {
+      if (_Token.instance.token.isEmpty) {
         throw EticonApiError(
             error:
                 'Authentication token is empty, use Api.setToken (String url)');
@@ -102,12 +95,7 @@ class Api {
       throw EticonApiError(error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
-      if (_Token.instance.token == null) {
-        throw EticonApiError(
-            error:
-                'Authentication token is not set, use Api.setToken (String url)');
-      }
-      if (_Token.instance.token!.isEmpty) {
+      if (_Token.instance.token.isEmpty) {
         throw EticonApiError(
             error:
                 'Authentication token is empty, use Api.setToken (String url)');
@@ -127,12 +115,7 @@ class Api {
       throw EticonApiError(error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
-      if (_Token.instance.token == null) {
-        throw EticonApiError(
-            error:
-                'Authentication token is not set, use Api.setToken (String url)');
-      }
-      if (_Token.instance.token!.isEmpty) {
+      if (_Token.instance.token.isEmpty) {
         throw EticonApiError(
             error:
                 'Authentication token is empty, use Api.setToken (String url)');
@@ -152,12 +135,7 @@ class Api {
       throw EticonApiError(error: 'Base url not set, use Api.init(String url)');
     }
     if (isAuth) {
-      if (_Token.instance.token == null) {
-        throw EticonApiError(
-            error:
-                'Authentication token is not set, use Api.setToken (String url)');
-      }
-      if (_Token.instance.token!.isEmpty) {
+      if (_Token.instance.token.isEmpty) {
         throw EticonApiError(
             error:
                 'Authentication token is empty, use Api.setToken (String url)');
@@ -177,10 +155,10 @@ class _Token {
   static _Token instance = _Token._();
 
   ///Private token
-  static String? _t;
+  static String _t = '';
 
   ///Get token
-  String? get token => _t;
+  String get token => _t;
 
   ///Set token
   void setToken(String t) {
@@ -307,11 +285,11 @@ class _ApiST {
       if (isAuth) {
         if ((testMode || _globalTestMode) && !_disableState) {
           log(_Token.instance.token.toString(), name: 'API TEST GET: Token');
-          log(getAuthHeader(token: _Token.instance.token!).toString(),
+          log(getAuthHeader(token: _Token.instance.token).toString(),
               name: 'API TEST GET: Auth Header');
         }
         response = await http.get(url,
-            headers: getAuthHeader(token: _Token.instance.token!));
+            headers: getAuthHeader(token: _Token.instance.token));
         // log(response.body);
       } else {
         if ((testMode || _globalTestMode) && !_disableState) {
@@ -348,7 +326,7 @@ class _ApiST {
     //   try {
     //     if (isAuth) {
     //       response = await http.get(url,
-    //           headers: getAuthHeader(token: _Token.instance.token!));
+    //           headers: getAuthHeader(token: _Token.instance.token));
     //     } else {
     //       response = await http.get(url, headers: getNoAuthHeader);
     //     }
@@ -399,12 +377,12 @@ class _ApiST {
       if (isAuth) {
         if ((testMode || _globalTestMode) && !_disableState) {
           log(_Token.instance.token.toString(), name: 'API TEST POST: Token');
-          log(getAuthHeader(token: _Token.instance.token!).toString(),
+          log(getAuthHeader(token: _Token.instance.token).toString(),
               name: 'API TEST POST: Auth Header');
           log(jsonEncode(body).toString(), name: 'API TEST POST: Body in JSON');
         }
         response = await http.post(url,
-            headers: getAuthHeader(token: _Token.instance.token!),
+            headers: getAuthHeader(token: _Token.instance.token),
             body: jsonEncode(body));
       } else {
         if ((testMode || _globalTestMode) && !_disableState) {
@@ -446,7 +424,7 @@ class _ApiST {
     // try {
     //   if (isAuth) {
     //     response = await http.post(url,
-    //         headers: getAuthHeader(token: _Token.instance.token!),
+    //         headers: getAuthHeader(token: _Token.instance.token),
     //         body: jsonEncode(body));
     //   } else {
     //     response = await http.post(url,
@@ -497,11 +475,11 @@ class _ApiST {
       if (isAuth) {
         if ((testMode || _globalTestMode) && !_disableState) {
           log(_Token.instance.token.toString(), name: 'API TEST PUT: Token');
-          log(getAuthHeader(token: _Token.instance.token!).toString(),
+          log(getAuthHeader(token: _Token.instance.token).toString(),
               name: 'API TEST PUT: Auth Header');
         }
         response = await http.put(url,
-            headers: getAuthHeader(token: _Token.instance.token!),
+            headers: getAuthHeader(token: _Token.instance.token),
             body: jsonEncode(body));
         // log('Ответ put ${response.statusCode} - ${response.body}');
       } else {
@@ -541,7 +519,7 @@ class _ApiST {
     //   try {
     //     if (isAuth) {
     //       response = await http.put(url,
-    //           headers: getAuthHeader(token: _Token.instance.token!),
+    //           headers: getAuthHeader(token: _Token.instance.token),
     //           body: jsonEncode(body));
     //     } else {
     //       response = await http.put(url,
@@ -608,14 +586,14 @@ class _ApiST {
       if (isAuth) {
         if ((testMode || _globalTestMode) && !_disableState) {
           log(_Token.instance.token.toString(), name: 'API TEST DELETE: Token');
-          log(getAuthHeader(token: _Token.instance.token!).toString(),
+          log(getAuthHeader(token: _Token.instance.token).toString(),
               name: 'API TEST DELETE: Auth Header');
         }
         response = await http.delete(url,
-            headers: getAuthHeader(token: _Token.instance.token!));
+            headers: getAuthHeader(token: _Token.instance.token));
       } else {
         if ((testMode || _globalTestMode) && !_disableState) {
-          log(getAuthHeader(token: _Token.instance.token!).toString(),
+          log(getAuthHeader(token: _Token.instance.token).toString(),
               name: 'API TEST DELETE: Auth Header');
         }
         response = await http.delete(url, headers: getNoAuthHeader);
@@ -649,7 +627,7 @@ class _ApiST {
     //   try {
     //     if (isAuth) {
     //       response = await http.delete(url,
-    //           headers: getAuthHeader(token: _Token.instance.token!));
+    //           headers: getAuthHeader(token: _Token.instance.token));
     //     } else {
     //       response = await http.delete(url, headers: getNoAuthHeader);
     //     }
