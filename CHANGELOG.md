@@ -1,5 +1,11 @@
+## 1.2.2-beta
+* Fix some bugs
+
+## 1.2.1
+* Fix some bugs
+
 ## 1.2.0
-*Release from beta
+* Release from beta
 
 ## 1.2.0-beta.1.
 * Edit README

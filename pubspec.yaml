@@ -1,6 +1,6 @@
 name: eticon_api
 description: 'This package will help you quickly and easily work with HTTP REQUESTS. All you need to do is select one of the 4 required requests: GET, POST, DELETE, PUT'
-version: 1.2.0
+version: 1.2.2-beta.1
 homepage: https://github.com/kensamare/eticon_api
 
 environment:
@@ -12,7 +12,6 @@ dependencies:
     sdk: flutter
   get_storage: ^2.0.3
   http: ^0.13.4
-  shared_preferences: ^2.0.8
 
 dev_dependencies:
   flutter_test:

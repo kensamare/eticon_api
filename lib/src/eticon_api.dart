@@ -7,7 +7,6 @@ import 'package:get_storage/get_storage.dart';
 import 'api_errors.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart' show Response;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Api {
   ///Initialization API class
@@ -316,17 +315,19 @@ class _ApiST {
       if ((testMode || _globalTestMode) && !_disableState) {
         log(response.statusCode.toString(),
             name: 'API TEST GET: Response Code');
-        String responseBody;
-        if (_enableUtf8Decoding) {
-          responseBody = utf8.decode(response.body.runes.toList());
-        } else {
-          responseBody = response.body;
-        }
-        if (response.body[0] == '{') {
-          log(responseBody, name: 'API TEST GET: Response Body');
-        } else {
-          log(json.decode(responseBody).toString(),
-              name: 'API TEST GET: Response Body');
+        if (response.body.isNotEmpty) {
+          String responseBody;
+          if (_enableUtf8Decoding) {
+            responseBody = utf8.decode(response.body.runes.toList());
+          } else {
+            responseBody = response.body;
+          }
+          if (response.body[0] == '{') {
+            log(responseBody, name: 'API TEST GET: Response Body');
+          } else {
+            log(json.decode(responseBody).toString(),
+                name: 'API TEST GET: Response Body');
+          }
         }
       }
     } catch (error) {
@@ -355,23 +356,26 @@ class _ApiST {
     if (response.statusCode != 200) {
       throw APIException(response.statusCode, body: response.body);
     }
-    var responseParams;
-    if (_enableUtf8Decoding) {
-      responseParams = json.decode(utf8.decode(response.body.runes.toList()));
-    } else {
-      responseParams = json.decode(response.body);
-    }
-    // Проверка на Map
-    if (responseParams is! Map) {
-      if ((testMode || _globalTestMode) && !_disableState) {
-        log('Response body is not a MAP, convert to {\'key\': response.body}',
-            name: 'API TEST GET: MAP Status');
+    if (response.body.isNotEmpty) {
+      var responseParams;
+      if (_enableUtf8Decoding) {
+        responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+      } else {
+        responseParams = json.decode(response.body);
       }
-      Map<String, dynamic> res = {'key': responseParams};
-      return res;
-    } else {
-      return Map<String, dynamic>.from(responseParams);
+      // Проверка на Map
+      if (responseParams is! Map) {
+        if ((testMode || _globalTestMode) && !_disableState) {
+          log('Response body is not a MAP, convert to {\'key\': response.body}',
+              name: 'API TEST GET: MAP Status');
+        }
+        Map<String, dynamic> res = {'key': responseParams};
+        return res;
+      } else {
+        return Map<String, dynamic>.from(responseParams);
+      }
     }
+    return {};
   }
 
   ///Method HTTP POST
@@ -413,17 +417,21 @@ class _ApiST {
       if ((testMode || _globalTestMode) && !_disableState) {
         log(response.statusCode.toString(),
             name: 'API TEST POST: Response Code');
-        String responseBody;
-        if (_enableUtf8Decoding) {
-          responseBody = utf8.decode(response.body.runes.toList());
+        if (response.body.isNotEmpty) {
+          String responseBody;
+          if (_enableUtf8Decoding) {
+            responseBody = utf8.decode(response.body.runes.toList());
+          } else {
+            responseBody = response.body;
+          }
+          if (response.body[0] == '{') {
+            log(responseBody, name: 'API TEST GET: Response Body');
+          } else {
+            log(json.decode(responseBody).toString(),
+                name: 'API TEST GET: Response Body');
+          }
         } else {
-          responseBody = response.body;
-        }
-        if (response.body[0] == '{') {
-          log(responseBody, name: 'API TEST GET: Response Body');
-        } else {
-          log(json.decode(responseBody).toString(),
-              name: 'API TEST GET: Response Body');
+          log('Empty response body', name: 'API TEST GET: Response Body');
         }
       }
     } catch (error) {
@@ -454,23 +462,26 @@ class _ApiST {
     if (response.statusCode != 200) {
       throw APIException(response.statusCode, body: response.body);
     }
-    var responseParams;
-    if (_enableUtf8Decoding) {
-      responseParams = json.decode(utf8.decode(response.body.runes.toList()));
-    } else {
-      responseParams = json.decode(response.body);
-    }
-    // Проверка на Map
-    if (responseParams is! Map) {
-      if ((testMode || _globalTestMode) && !_disableState) {
-        log('Response body is not a MAP, convert to {\'key\': response.body}',
-            name: 'API TEST POST: MAP Status');
+    if (response.body.isNotEmpty) {
+      var responseParams;
+      if (_enableUtf8Decoding) {
+        responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+      } else {
+        responseParams = json.decode(response.body);
       }
-      Map<String, dynamic> res = {'key': responseParams};
-      return res;
-    } else {
-      return Map<String, dynamic>.from(responseParams);
+      // Проверка на Map
+      if (responseParams is! Map) {
+        if ((testMode || _globalTestMode) && !_disableState) {
+          log('Response body is not a MAP, convert to {\'key\': response.body}',
+              name: 'API TEST POST: MAP Status');
+        }
+        Map<String, dynamic> res = {'key': responseParams};
+        return res;
+      } else {
+        return Map<String, dynamic>.from(responseParams);
+      }
     }
+    return {};
   }
 
   ///Method HTTP PUT
@@ -508,17 +519,19 @@ class _ApiST {
         log(jsonEncode(body).toString(), name: 'API TEST PUT: Body in JSON');
         log(response.statusCode.toString(),
             name: 'API TEST PUT: Response Code');
-        String responseBody;
-        if (_enableUtf8Decoding) {
-          responseBody = utf8.decode(response.body.runes.toList());
-        } else {
-          responseBody = response.body;
-        }
-        if (response.body[0] == '{') {
-          log(responseBody, name: 'API TEST GET: Response Body');
-        } else {
-          log(json.decode(responseBody).toString(),
-              name: 'API TEST GET: Response Body');
+        if (response.body.isNotEmpty) {
+          String responseBody;
+          if (_enableUtf8Decoding) {
+            responseBody = utf8.decode(response.body.runes.toList());
+          } else {
+            responseBody = response.body;
+          }
+          if (response.body[0] == '{') {
+            log(responseBody, name: 'API TEST GET: Response Body');
+          } else {
+            log(json.decode(responseBody).toString(),
+                name: 'API TEST GET: Response Body');
+          }
         }
       }
     } catch (error) {
@@ -553,23 +566,26 @@ class _ApiST {
 
     // Десериализация json
     //var responseParams = json.decode(response.body);
-    var responseParams;
-    if (_enableUtf8Decoding) {
-      responseParams = json.decode(utf8.decode(response.body.runes.toList()));
-    } else {
-      responseParams = json.decode(response.body);
-    }
-    // Проверка на Map
-    if (responseParams is! Map) {
-      if ((testMode || _globalTestMode) && !_disableState) {
-        log('Response body is not a MAP, convert to {\'key\': response.body}',
-            name: 'API TEST PUT: MAP Status');
+    if (response.body.isNotEmpty) {
+      var responseParams;
+      if (_enableUtf8Decoding) {
+        responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+      } else {
+        responseParams = json.decode(response.body);
       }
-      Map<String, dynamic> res = {'key': responseParams};
-      return res;
-    } else {
-      return Map<String, dynamic>.from(responseParams);
+      // Проверка на Map
+      if (responseParams is! Map) {
+        if ((testMode || _globalTestMode) && !_disableState) {
+          log('Response body is not a MAP, convert to {\'key\': response.body}',
+              name: 'API TEST PUT: MAP Status');
+        }
+        Map<String, dynamic> res = {'key': responseParams};
+        return res;
+      } else {
+        return Map<String, dynamic>.from(responseParams);
+      }
     }
+    return {};
   }
 
   ///Method HTTP DELETE
@@ -616,17 +632,19 @@ class _ApiST {
       if ((testMode || _globalTestMode) && !_disableState) {
         log(response.statusCode.toString(),
             name: 'API TEST DELETE: Response Code');
-        String responseBody;
-        if (_enableUtf8Decoding) {
-          responseBody = utf8.decode(response.body.runes.toList());
-        } else {
-          responseBody = response.body;
-        }
-        if (response.body[0] == '{') {
-          log(responseBody, name: 'API TEST GET: Response Body');
-        } else {
-          log(json.decode(responseBody).toString(),
-              name: 'API TEST GET: Response Body');
+        if (response.body.isNotEmpty) {
+          String responseBody;
+          if (_enableUtf8Decoding) {
+            responseBody = utf8.decode(response.body.runes.toList());
+          } else {
+            responseBody = response.body;
+          }
+          if (response.body[0] == '{') {
+            log(responseBody, name: 'API TEST GET: Response Body');
+          } else {
+            log(json.decode(responseBody).toString(),
+                name: 'API TEST GET: Response Body');
+          }
         }
       }
     } catch (error) {
@@ -658,22 +676,25 @@ class _ApiST {
     }
 
     // Десериализация json
-    var responseParams;
-    if (_enableUtf8Decoding) {
-      responseParams = json.decode(utf8.decode(response.body.runes.toList()));
-    } else {
-      responseParams = json.decode(response.body);
-    }
-    // Проверка на Map
-    if (responseParams is! Map) {
-      if ((testMode || _globalTestMode) && !_disableState) {
-        log('Response body is not a MAP, convert to {\'key\': response.body}',
-            name: 'API TEST DELETE: MAP Status');
+    if (response.body.isNotEmpty) {
+      var responseParams;
+      if (_enableUtf8Decoding) {
+        responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+      } else {
+        responseParams = json.decode(response.body);
       }
-      Map<String, dynamic> res = {'key': responseParams};
-      return res;
-    } else {
-      return Map<String, dynamic>.from(responseParams);
+      // Проверка на Map
+      if (responseParams is! Map) {
+        if ((testMode || _globalTestMode) && !_disableState) {
+          log('Response body is not a MAP, convert to {\'key\': response.body}',
+              name: 'API TEST DELETE: MAP Status');
+        }
+        Map<String, dynamic> res = {'key': responseParams};
+        return res;
+      } else {
+        return Map<String, dynamic>.from(responseParams);
+      }
     }
+    return {};
   }
 }
