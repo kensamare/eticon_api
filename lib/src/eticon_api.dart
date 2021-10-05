@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:get_storage/get_storage.dart';
+
 import 'api_errors.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart' show Response;
@@ -9,13 +11,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Api {
   ///Initialization API class
-  static void init(
+  static Future<void> init(
       {required String baseUrl,
       bool globalTestMode = false,
       bool bearerToken = true,
       disableAllTestMode = false,
-      bool enableUtf8Decoding = false}) {
-    if (!_ApiST.instance.setInitState(true)) {
+      bool enableUtf8Decoding = false}) async {
+    if (!_ApiST.instance.setInitState()) {
       throw EticonApiError(error: 'API class already initialization');
     }
     if (baseUrl.isEmpty) {
@@ -24,6 +26,7 @@ class Api {
     if (!baseUrl.startsWith('http'))
       throw EticonApiError(error: 'The url should start with https or http');
     if (baseUrl[baseUrl.length - 1] != '/') baseUrl += '/';
+    await GetStorage.init();
     _ApiST.instance.setBaseUrl(baseUrl);
     _ApiST.instance.setGlobalTestMode(globalTestMode);
     _ApiST.instance.disableAllTestMode(disableAllTestMode);
@@ -45,9 +48,14 @@ class Api {
   }
 
   ///Loads a token from device memory, return true if the token is in memory, else return false;
-  static Future<bool> loadTokenFromMemory() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString('token') ?? '';
+  // static Future<bool> loadTokenFromMemory() async {
+  static bool loadTokenFromMemory() {
+    if (!_ApiST.instance.initState) {
+      throw EticonApiError(error: 'Need Api.init() before loadTokenFromMemory');
+    }
+    String token = GetStorage().read('ApiEticonMainAuthToke2312') ?? '';
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // String token = prefs.getString('token') ?? '';
     if (token.isNotEmpty) {
       _Token.instance.setToken(token);
       return true;
@@ -59,9 +67,14 @@ class Api {
   static String? get token => _Token.instance.token;
 
   ///Set Authorization token
-  static Future<void> setToken(String token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
+  // static Future<void> setToken(String token) async {
+  static void setToken(String token) {
+    if (!_ApiST.instance.initState) {
+      throw EticonApiError(error: 'Need Api.init() before setToken');
+    }
+    GetStorage().write('ApiEticonMainAuthToke2312', token);
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // await prefs.setString('token', token);
     _Token.instance.setToken(token);
   }
 
@@ -195,13 +208,15 @@ class _ApiST {
   ///Enable utf-8 decoding
   static bool _enableUtf8Decoding = false;
 
-  bool setInitState(bool initState) {
+  bool setInitState() {
     if (_init) {
       return false;
     }
     _init = true;
     return true;
   }
+
+  bool get initState => _init;
 
   ///Set Bearer token mode
   void setBearerMode(bool mode) {

@@ -1,3 +1,12 @@
+## 1.2.0-beta
+* Changed storage saving token
+* Api.init now async
+* Api.setToken and loadTokenFromMemory now sync
+* Edit readme
+
+## 1.1.3
+* Edit Russian readme
+
 ## 1.1.2
 * Fix some bugs
 
