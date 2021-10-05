@@ -10,8 +10,8 @@ Package for working with http requests.
 First you need to initialize:
 
 ```dart
-void main(){
-  Api.init(baseUrl: 'https://example.com/');
+void main() async {
+  await Api.init(baseUrl: 'https://example.com/');
   runApp(MyApp());
 }
 ```
@@ -95,7 +95,7 @@ Note!!! that the ***Authorization*** header is added automatically on an authori
 For authorized requests, you need to set the token value. The set value will be written to the device memory.
 
 ```dart
-  await Api.setToken('{your_token}');
+  Api.setToken('{your_token}');
 ```
 
 Get a token:
@@ -108,7 +108,8 @@ When the application starts, you can unload the token recorded in the device's m
 
 ```dart
 void main() async {
-  bool tokenLoaded = await Api.loadTokenFromMemory();
+  await Api.init(baseUrl: 'https://example.com/');
+  bool tokenLoaded = Api.loadTokenFromMemory();
   if(tokenLoaded){
     print(Api.token);
   }
@@ -119,7 +120,7 @@ If you do not use the ***Bearer*** type in the token, then disable it:
 
 ```dart
 void main() async {
-  Api.init(baseUrl: 'https://example.com/', bearerToken: false);
+  await Api.init(baseUrl: 'https://example.com/', bearerToken: false);
   runApp(MyApp());
 }
 ```
@@ -130,7 +131,7 @@ Test Mode is a handy tool for developing an application that shows complete info
 
 ```dart
 void main() async {
-  Api.init(baseUrl: 'https://example.com/', globalTestMode: true);
+  await Api.init(baseUrl: 'https://example.com/', globalTestMode: true);
   runApp(MyApp());
 }
 
@@ -152,7 +153,7 @@ To disable test mode in the whole project, you can use ***disableAllTestMode***:
 
 ```dart
 void main() async {
-  Api.init(
+  await Api.init(
     baseUrl: 'https://example.com/', 
     globalTestMode: true, // Will be ignored
     disableAllTestMode: true,
@@ -167,7 +168,7 @@ There is built-in support for decoding in response to utf-8
 
 ```dart
 void main() async {
-  Api.init(
+  await Api.init(
     baseUrl: 'https://example.com/', 
     ebableUtf8Decoding: true,
   );

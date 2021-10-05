@@ -1,3 +1,6 @@
+## 1.2.0-beta.1.
+* Edit README
+
 ## 1.2.0-beta
 * Changed storage saving token
 * Api.init now async

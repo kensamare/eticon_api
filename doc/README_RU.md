@@ -11,8 +11,8 @@
 Для начала необходимо провести инициализацию:
 
 ```dart
-void main(){
-  Api.init(baseUrl: 'https://example.com/');
+void main() async {
+  await Api.init(baseUrl: 'https://example.com/');
   runApp(MyApp());
 }
 ```
@@ -98,7 +98,7 @@ Future<void> putRequest() async {
 Для авторизированных запросов необходимо установить значение токена. Установленное значение будет записано в память устройства.
 
 ```dart
-  await Api.setToken('{your_token}');
+  Api.setToken('{your_token}');
 ```
 
 Получить токен:
@@ -111,6 +111,7 @@ Future<void> putRequest() async {
 
 ```dart
 void main() async {
+  await Api.init(baseUrl: 'https://example.com/');
   bool tokenLoaded = await Api.loadTokenFromMemory();
   if(tokenLoaded){
     print(Api.token);
@@ -122,7 +123,7 @@ void main() async {
 
 ```dart
 void main() async {
-  Api.init(baseUrl: 'https://example.com/', bearerToken: false);
+  await Api.init(baseUrl: 'https://example.com/', bearerToken: false);
   runApp(MyApp());
 }
 ```
@@ -133,7 +134,7 @@ void main() async {
 
 ```dart
 void main() async {
-  Api.init(baseUrl: 'https://example.com/', globalTestMode: true);
+  await Api.init(baseUrl: 'https://example.com/', globalTestMode: true);
   runApp(MyApp());
 }
 
@@ -155,7 +156,7 @@ Future<void> getRequest() async {
 
 ```dart
 void main() async {
-  Api.init(
+  await Api.init(
     baseUrl: 'https://example.com/', 
     globalTestMode: true, // Will be ignored
     disableAllTestMode: true,
@@ -170,7 +171,7 @@ void main() async {
 
 ```dart
 void main() async {
-  Api.init(
+  await Api.init(
     baseUrl: 'https://example.com/', 
     ebableUtf8Decoding: true,
   );
