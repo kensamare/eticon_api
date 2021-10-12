@@ -15,7 +15,8 @@ class Api {
       bool globalTestMode = false,
       bool bearerToken = true,
       disableAllTestMode = false,
-      bool enableUtf8Decoding = false}) async {
+      bool enableUtf8Decoding = false,
+      String? storageUrl}) async {
     if (!_ApiST.instance.setInitState()) {
       throw EticonApiError(error: 'API class already initialization');
     }
@@ -31,6 +32,9 @@ class Api {
     _ApiST.instance.disableAllTestMode(disableAllTestMode);
     _ApiST.instance.enableUtf8Decoding(enableUtf8Decoding);
     _ApiST.instance.setBearerMode(bearerToken);
+    if (storageUrl != null) {
+      _ApiST.instance.setStorageUrl(storageUrl);
+    }
   }
 
   ///Checks token storage for emptiness
@@ -39,6 +43,15 @@ class Api {
       return true;
     }
     return false;
+  }
+
+  static String dataFromStorage(String path) {
+    if (_ApiST.instance.storageUrl == null) {
+      throw EticonApiError(
+          error: 'Storage url is null, set storageUrl in Api.init()');
+    } else {
+      return '${_ApiST.instance.storageUrl}$path';
+    }
   }
 
   ///Set headers. Default is only "Content-type": application/json
@@ -192,6 +205,9 @@ class _ApiST {
   ///Base url int singletons
   static String? _baseUrl;
 
+  ///Storage url int singletons
+  static String? _storageUrl;
+
   ///Bearer authentication
   static bool _bearerAuth = true;
 
@@ -227,8 +243,12 @@ class _ApiST {
     _enableUtf8Decoding = decoding;
   }
 
-  ///Set base url int singletons
+  ///Return baseUrl
   String? get baseUrl => _baseUrl;
+
+  ///Return storageUrl
+  ///Link to the data store, which is needed to get various data
+  String? get storageUrl => _storageUrl;
 
   ///Set Headers
   void setHeaders(Map<String, String> headers) {
@@ -238,6 +258,11 @@ class _ApiST {
   ///Sets the base URL for processing requests
   void setBaseUrl(String url) {
     _baseUrl = url;
+  }
+
+  ///Sets the storage URL for get data
+  void setStorageUrl(String url) {
+    _storageUrl = url;
   }
 
   ///Set globalTestMode

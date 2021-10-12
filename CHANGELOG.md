@@ -1,5 +1,12 @@
+## 1.2.2
+* Add new field in Api.init(), String storageUrl
+* Add new method, Api.dataFromStorage(String path);
+* Fix bug with empty response
+* Update README
+
 ## 1.2.2-beta
 * Fix some bugs
+* Small experiments
 
 ## 1.2.1
 * Fix some bugs
