@@ -162,6 +162,24 @@ void main() async {
 }
 ```
 
+## Server storage url
+It is often necessary to get various data from the server storage, for example, images. However, the base url and the url to the storage sometimes don't match or you have to write the url manually each time.
+
+To set a storage url, it must be specified in the initialization:
+
+```dart
+void main() async {
+  await Api.init(baseUrl: 'https://example.com/', storageUrl: 'https://example.com/storage/');
+  runApp(MyApp());
+}
+```
+
+Usage example:
+
+```dart
+Image.network(Api.dataFromStorage('image.png'));
+```
+
 ## Decoding UTF-8
 
 There is built-in support for decoding in response to utf-8
