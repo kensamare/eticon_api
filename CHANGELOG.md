@@ -1,3 +1,9 @@
+## 1.3.0
+* Add new "raw" requests
+* Coordinate changes within the work of the package.
+  However, for users, everything remains the same.  
+* Update README
+
 ## 1.2.2
 * Add new field in Api.init(), String storageUrl
 * Add new method, Api.dataFromStorage(String path);

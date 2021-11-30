@@ -74,10 +74,56 @@ Future<void> putRequest() async {
     }
   }
 ```
+
+## Raw Methods
+
+All raw methods take the url to be requested. In case of GET and DELETE without parameters.
+They are specified separately as in the methods described above.
+
+```dart
+Future<void> request() async {
+    try{
+      Map<String, dynamic> response = await Api.rawGet(url: 'https://example.com/profile', query: {"id": 5}, headers: {"Content-type": 'application/json'});
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+
+```dart
+Future<void> request() async {
+    try{
+      Map<String, dynamic> response = await Api.rawPost(url: 'https://example.com/profile', body: {"id": 5}, headers: {"Content-type": 'application/json'});
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+
+```dart
+Future<void> request() async {
+  try{
+    Map<String, dynamic> response = await Api.rawDelete(url: 'https://example.com/profile', query: {"id": 5}, headers: {"Content-type": 'application/json'});
+  } on APIException catch(error){
+    print('ERROR CODE: ${error.code}');
+  }
+}
+```
+
+```dart
+Future<void> request() async {
+  try{
+    Map<String, dynamic> response = await Api.rawPut(url: 'https://example.com/profile', body: {"id": 5}, headers: {"Content-type": 'application/json'});
+  } on APIException catch(error){
+    print('ERROR CODE: ${error.code}');
+  }
+}
+```
+
 ## HTTP status codes
 
 If the result of the status code in the response is not 200, then **APIException** will be thrown. It contains the status code as well as the response body.
-In case there are problems with the Internet connection, **APIException** will return code 0, if there is no Internet connection. Code 1, for other connection errors.
+In case there are problems with the Internet connection, **APIException** will return code 0.
 
 ## Headers
 

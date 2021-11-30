@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:get_storage/get_storage.dart';
 
@@ -45,6 +44,7 @@ class Api {
     return false;
   }
 
+  ///Help to get url to resource in server storage
   static String dataFromStorage(String path) {
     if (_ApiST.instance.storageUrl == null) {
       throw EticonApiError(
@@ -289,6 +289,7 @@ class _ApiST {
   ///Enable utf-8 decoding
   static bool _enableUtf8Decoding = false;
 
+  ///Set Init State
   bool setInitState() {
     if (_init) {
       return false;
@@ -359,8 +360,7 @@ class _ApiST {
     return {"Content-type": 'application/json'};
   }
 
-  // Метод get
-
+  ///All Request method
   Future<Map<String, dynamic>> request({
     required _TYPE type,
     String? baseUrl,

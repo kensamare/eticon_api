@@ -76,10 +76,55 @@ Future<void> putRequest() async {
   }
 ```
 
+## "Cырые" методы
+
+Все сырые методы принимают url, по которому делается запрос. В случае GET и DELETE без параметров.
+Они указываются отдельно как и в методах описанных выше.
+
+```dart
+Future<void> request() async {
+    try{
+      Map<String, dynamic> response = await Api.rawGet(url: 'https://example.com/profile', query: {"id": 5}, headers: {"Content-type": 'application/json'});
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+
+```dart
+Future<void> request() async {
+    try{
+      Map<String, dynamic> response = await Api.rawPost(url: 'https://example.com/profile', body: {"id": 5}, headers: {"Content-type": 'application/json'});
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+
+```dart
+Future<void> request() async {
+  try{
+    Map<String, dynamic> response = await Api.rawDelete(url: 'https://example.com/profile', query: {"id": 5}, headers: {"Content-type": 'application/json'});
+  } on APIException catch(error){
+    print('ERROR CODE: ${error.code}');
+  }
+}
+```
+
+```dart
+Future<void> request() async {
+  try{
+    Map<String, dynamic> response = await Api.rawPut(url: 'https://example.com/profile', body: {"id": 5}, headers: {"Content-type": 'application/json'});
+  } on APIException catch(error){
+    print('ERROR CODE: ${error.code}');
+  }
+}
+```
+
 ## Коды состояний HTTP
 
 Если результат кода состояния в ответе будет не равен 200, тогда сработает **APIException**. Он содержит в себе код состояния, а также тело ответа.
-В случае, если же будут проблемы с Интеренет соединенем, **APIException** вернет код 0, при отсутсвие Интернета. Код 1, при других ошибках соединения.
+В случае, если же будут проблемы с Интеренет соединенем, **APIException** вернет код 0.
 
 ## Заголовки
 
