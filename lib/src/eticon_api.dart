@@ -106,7 +106,7 @@ class Api {
                 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await _ApiST.instance.getRequest(
+    return await _ApiST.instance.request(type: _TYPE.GET,
         method: method, isAuth: isAuth, testMode: testMode, query: query);
   }
 
@@ -126,8 +126,8 @@ class Api {
                 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await _ApiST.instance.postRequest(
-        method: method, isAuth: isAuth, testMode: testMode, body: body);
+    return await _ApiST.instance.request(type: _TYPE.POST,
+        method: method, isAuth: isAuth, testMode: testMode, query: body);
   }
 
   /// Sends an HTTP PUT request.
@@ -146,8 +146,8 @@ class Api {
                 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await _ApiST.instance.putRequest(
-        method: method, isAuth: isAuth, testMode: testMode, body: body);
+    return await _ApiST.instance.request(type: _TYPE.PUT,
+        method: method, isAuth: isAuth, testMode: testMode, query: body);
   }
 
   /// Sends an HTTP DELETE request.
@@ -166,7 +166,7 @@ class Api {
                 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await _ApiST.instance.deleteRequest(
+    return await _ApiST.instance.request(type: _TYPE.DEL,
         method: method, isAuth: isAuth, testMode: testMode, query: query);
   }
 }
@@ -190,6 +190,8 @@ class _Token {
     _t = t;
   }
 }
+
+enum _TYPE { GET, POST, DEL, PUT }
 
 ///Api singleton
 class _ApiST {
@@ -275,7 +277,7 @@ class _ApiST {
     _disableState = disableState;
   }
 
-  ///Get no authorization headers
+  ///Get authorization headers
   static Map<String, String> getAuthHeader({required String token}) {
     String tokenMSG = '${_bearerAuth ? 'Bearer ' : ''}$token';
     if (_headers != null) {
@@ -285,7 +287,7 @@ class _ApiST {
     return {"Authorization": '$tokenMSG', "Content-type": 'application/json'};
   }
 
-  ///Get Authorization headers
+  ///Get no Authorization headers
   static Map<String, String> get getNoAuthHeader {
     if (_headers != null) {
       return _headers!;
@@ -294,6 +296,123 @@ class _ApiST {
   }
 
   // Метод get
+
+  Future<Map<String, dynamic>> request({
+    required _TYPE type,
+    String? baseUrl,
+    String? method,
+    bool isAuth = false,
+    bool testMode = false,
+    Map<String, dynamic>? query,
+  }) async {
+    String testModeType = type.toString().replaceAll('_TYPE.', '');
+
+    ///Генерация параметров
+    List<String> _queryList = [];
+    if (type == _TYPE.GET || type == _TYPE.DEL) {
+      if (query != null)
+        query.forEach((key, value) {
+          if (value is List) {
+            for (var el in value) _queryList.add('$key=$el');
+          } else
+            _queryList.add('$key=$value');
+        });
+      if ((testMode || _globalTestMode) && !_disableState) {
+        log(_queryList.toString(), name: 'API TEST $testModeType: Query List');
+      }
+    } else {
+      if ((testMode || _globalTestMode) && !_disableState) {
+        log(jsonEncode(query).toString(),
+            name: 'API TEST $testModeType: Body in JSON');
+      }
+    }
+    //Формирование ссылки запроса
+    Uri url = Uri.parse(baseUrl.isNull
+        ? _baseUrl!
+        : baseUrl! +
+            '$method${type == _TYPE.GET || type == _TYPE.DEL ? '?${_queryList.join("&")}' : ''}');
+    if ((testMode || _globalTestMode) && !_disableState)
+      log(url.toString(), name: 'API TEST $testModeType: URL');
+    // Делаем запрос
+    Response response;
+    // if ((testMode || _globalTestMode) && !_disableState) {
+    try {
+      Map<String, String> headers = isAuth
+          ? getAuthHeader(token: _Token.instance.token)
+          : getNoAuthHeader;
+      if ((testMode || _globalTestMode) && !_disableState) {
+        if (isAuth) {
+          log(_Token.instance.token.toString(),
+              name: 'API TEST $testModeType: Token');
+        }
+        log(headers.toString(), name: 'API TEST $testModeType: Headers');
+      }
+      switch (type) {
+        case _TYPE.GET:
+          response = await http.get(url, headers: headers);
+          break;
+        case _TYPE.POST:
+          response = await http.post(url, headers: headers, body: query);
+          break;
+        case _TYPE.DEL:
+          response = await http.delete(url, headers: headers);
+          break;
+        case _TYPE.PUT:
+          response = await http.put(url, headers: headers, body: query);
+          break;
+      }
+      if ((testMode || _globalTestMode) && !_disableState) {
+        log(response.statusCode.toString(),
+            name: 'API TEST $testModeType: Response Code');
+        if (response.body.isNotEmpty) {
+          String responseBody;
+          if (_enableUtf8Decoding) {
+            responseBody = utf8.decode(response.body.runes.toList());
+          } else {
+            responseBody = response.body;
+          }
+          if (response.body[0] == '{') {
+            log(responseBody, name: 'API TEST $testModeType: Response Body');
+          } else {
+            log(json.decode(responseBody).toString(),
+                name: 'API TEST $testModeType: Response Body');
+          }
+        }
+      }
+    } catch (error) {
+      throw APIException(0, body: error);
+      // if (error is SocketException) {
+      //   if (error.osError != null) if (error.osError!.errorCode == 7) {
+      //     throw APIException(0, body: 'No Internet connection');
+      //   }
+      // }
+      // throw APIException(1, body: error.toString());
+    }
+    // Если все не ок то отправляем код ответа http
+    if (!response.statusCode.toString().startsWith('20')) {
+      throw APIException(response.statusCode, body: response.body);
+    }
+    if (response.body.isNotEmpty) {
+      var responseParams;
+      if (_enableUtf8Decoding) {
+        responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+      } else {
+        responseParams = json.decode(response.body);
+      }
+      // Проверка на Map
+      if (responseParams is! Map) {
+        if ((testMode || _globalTestMode) && !_disableState) {
+          log('Response body is not a MAP, convert to {\'key\': response.body}',
+              name: 'API TEST $testModeType: MAP Status');
+        }
+        Map<String, dynamic> res = {'key': responseParams};
+        return res;
+      } else {
+        return Map<String, dynamic>.from(responseParams);
+      }
+    }
+    return {};
+  }
 
   ///Method HTTP GET
   Future<Map<String, dynamic>> getRequest(
@@ -649,8 +768,8 @@ class _ApiST {
             headers: getAuthHeader(token: _Token.instance.token));
       } else {
         if ((testMode || _globalTestMode) && !_disableState) {
-          log(getAuthHeader(token: _Token.instance.token).toString(),
-              name: 'API TEST DELETE: Auth Header');
+          log(getNoAuthHeader.toString(),
+              name: 'API TEST DELETE: No Auth Header');
         }
         response = await http.delete(url, headers: getNoAuthHeader);
       }
@@ -721,5 +840,17 @@ class _ApiST {
       }
     }
     return {};
+  }
+}
+
+extension NullExtension on Object? {
+  bool get isNull => _checkNull();
+
+  bool _checkNull() {
+    if (this == null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }
