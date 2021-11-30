@@ -106,8 +106,12 @@ class Api {
                 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await _ApiST.instance.request(type: _TYPE.GET,
-        method: method, isAuth: isAuth, testMode: testMode, query: query);
+    return await _ApiST.instance.request(
+        type: _TYPE.GET,
+        method: method,
+        isAuth: isAuth,
+        testMode: testMode,
+        query: query);
   }
 
   /// Sends an HTTP POST request.
@@ -126,8 +130,12 @@ class Api {
                 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await _ApiST.instance.request(type: _TYPE.POST,
-        method: method, isAuth: isAuth, testMode: testMode, query: body);
+    return await _ApiST.instance.request(
+        type: _TYPE.POST,
+        method: method,
+        isAuth: isAuth,
+        testMode: testMode,
+        query: body);
   }
 
   /// Sends an HTTP PUT request.
@@ -146,8 +154,12 @@ class Api {
                 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await _ApiST.instance.request(type: _TYPE.PUT,
-        method: method, isAuth: isAuth, testMode: testMode, query: body);
+    return await _ApiST.instance.request(
+        type: _TYPE.PUT,
+        method: method,
+        isAuth: isAuth,
+        testMode: testMode,
+        query: body);
   }
 
   /// Sends an HTTP DELETE request.
@@ -166,8 +178,60 @@ class Api {
                 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await _ApiST.instance.request(type: _TYPE.DEL,
-        method: method, isAuth: isAuth, testMode: testMode, query: query);
+    return await _ApiST.instance.request(
+        type: _TYPE.DEL,
+        method: method,
+        isAuth: isAuth,
+        testMode: testMode,
+        query: query);
+  }
+
+  /// Sends an HTTP GET request.
+  static Future<Map<String, dynamic>> rawGet(
+      {required String url,
+      Map<String, String> headers = const {"Content-type": 'application/json'},
+      bool testMode = false,
+      Map<String, dynamic>? query}) async {
+    return await _ApiST.instance.request(
+        type: _TYPE.GET,
+        baseUrl: url,
+        rawHeaders: headers,
+        testMode: testMode,
+        query: query);
+  }
+
+  /// Sends an HTTP POST request.
+  static Future<Map<String, dynamic>> rawPost(
+      {required String url,
+      Map<String, String> headers = const {"Content-type": 'application/json'},
+      bool testMode = false,
+      required Map<String, dynamic> body}) async {
+    return await _ApiST.instance.request(
+        type: _TYPE.POST, baseUrl: url, testMode: testMode, query: body);
+  }
+
+  /// Sends an HTTP PUT request.
+  static Future<Map<String, dynamic>> rawPut(
+      {required String url,
+      Map<String, String> headers = const {"Content-type": 'application/json'},
+      bool testMode = false,
+      required Map<String, dynamic> body}) async {
+    return await _ApiST.instance.request(
+        type: _TYPE.PUT, baseUrl: url, testMode: testMode, query: body);
+  }
+
+  /// Sends an HTTP DELETE request.
+  static Future<Map<String, dynamic>> rawDelete(
+      {required String url,
+      Map<String, String> headers = const {"Content-type": 'application/json'},
+      bool testMode = false,
+      Map<String, dynamic>? query}) async {
+    return await _ApiST.instance.request(
+        type: _TYPE.DEL,
+        baseUrl: url,
+        rawHeaders: headers,
+        testMode: testMode,
+        query: query);
   }
 }
 
@@ -302,6 +366,7 @@ class _ApiST {
     String? baseUrl,
     String? method,
     bool isAuth = false,
+    Map<String, String>? rawHeaders,
     bool testMode = false,
     Map<String, dynamic>? query,
   }) async {
@@ -327,19 +392,22 @@ class _ApiST {
       }
     }
     //Формирование ссылки запроса
-    Uri url = Uri.parse('${baseUrl == null
-        ? _baseUrl!
-        : baseUrl}' +
-            '$method${type == _TYPE.GET || type == _TYPE.DEL ? '?${_queryList.join("&")}' : ''}');
+    Uri url = Uri.parse('${baseUrl == null ? '_baseUrl!+$method' : baseUrl}' +
+        '${type == _TYPE.GET || type == _TYPE.DEL ? '?${_queryList.join("&")}' : ''}');
     if ((testMode || _globalTestMode) && !_disableState)
       log(url.toString(), name: 'API TEST $testModeType: URL');
     // Делаем запрос
     Response response;
     // if ((testMode || _globalTestMode) && !_disableState) {
     try {
-      Map<String, String> headers = isAuth
-          ? getAuthHeader(token: _Token.instance.token)
-          : getNoAuthHeader;
+      Map<String, String> headers;
+      if (rawHeaders == null) {
+        headers = isAuth
+            ? getAuthHeader(token: _Token.instance.token)
+            : getNoAuthHeader;
+      } else {
+        headers = rawHeaders;
+      }
       if ((testMode || _globalTestMode) && !_disableState) {
         if (isAuth) {
           log(_Token.instance.token.toString(),
@@ -352,13 +420,15 @@ class _ApiST {
           response = await http.get(url, headers: headers);
           break;
         case _TYPE.POST:
-          response = await http.post(url, headers: headers, body: jsonEncode(query));
+          response =
+              await http.post(url, headers: headers, body: jsonEncode(query));
           break;
         case _TYPE.DEL:
           response = await http.delete(url, headers: headers);
           break;
         case _TYPE.PUT:
-          response = await http.put(url, headers: headers, body: jsonEncode(query));
+          response =
+              await http.put(url, headers: headers, body: jsonEncode(query));
           break;
       }
       if ((testMode || _globalTestMode) && !_disableState) {
@@ -404,434 +474,6 @@ class _ApiST {
         if ((testMode || _globalTestMode) && !_disableState) {
           log('Response body is not a MAP, convert to {\'key\': response.body}',
               name: 'API TEST $testModeType: MAP Status');
-        }
-        Map<String, dynamic> res = {'key': responseParams};
-        return res;
-      } else {
-        return Map<String, dynamic>.from(responseParams);
-      }
-    }
-    return {};
-  }
-
-  ///Method HTTP GET
-  Future<Map<String, dynamic>> getRequest(
-      {required String method,
-      bool isAuth = false,
-      bool testMode = false,
-      Map<String, dynamic>? query}) async {
-    // Генерация списка параметром
-    List<String> _queryList = [];
-    if (query != null)
-      query.forEach((key, value) {
-        if (value is List) {
-          for (var el in value) _queryList.add('$key=$el');
-        } else
-          _queryList.add('$key=$value');
-      });
-    if ((testMode || _globalTestMode) && !_disableState) {
-      log(_queryList.toString(), name: 'API TEST GET: Query List');
-    }
-    //Формирование ссылки запроса
-    Uri url = Uri.parse(_baseUrl! + '$method?${_queryList.join("&")}');
-    if ((testMode || _globalTestMode) && !_disableState)
-      log(url.toString(), name: 'API TEST GET: URL');
-    // Делаем запрос
-    Response response;
-    // if ((testMode || _globalTestMode) && !_disableState) {
-    try {
-      if (isAuth) {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log(_Token.instance.token.toString(), name: 'API TEST GET: Token');
-          log(getAuthHeader(token: _Token.instance.token).toString(),
-              name: 'API TEST GET: Auth Header');
-        }
-        response = await http.get(url,
-            headers: getAuthHeader(token: _Token.instance.token));
-        // log(response.body);
-      } else {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log(getNoAuthHeader.toString(),
-              name: 'API TEST POST: NO Auth Header');
-        }
-        response = await http.get(url, headers: getNoAuthHeader);
-      }
-      if ((testMode || _globalTestMode) && !_disableState) {
-        log(response.statusCode.toString(),
-            name: 'API TEST GET: Response Code');
-        if (response.body.isNotEmpty) {
-          String responseBody;
-          if (_enableUtf8Decoding) {
-            responseBody = utf8.decode(response.body.runes.toList());
-          } else {
-            responseBody = response.body;
-          }
-          if (response.body[0] == '{') {
-            log(responseBody, name: 'API TEST GET: Response Body');
-          } else {
-            log(json.decode(responseBody).toString(),
-                name: 'API TEST GET: Response Body');
-          }
-        }
-      }
-    } catch (error) {
-      if (error is SocketException) {
-        if (error.osError != null) if (error.osError!.errorCode == 7) {
-          throw APIException(0, body: 'No Internet connection');
-        }
-      }
-      throw APIException(1, body: error.toString());
-    }
-    // } else {
-    //   try {
-    //     if (isAuth) {
-    //       response = await http.get(url,
-    //           headers: getAuthHeader(token: _Token.instance.token));
-    //     } else {
-    //       response = await http.get(url, headers: getNoAuthHeader);
-    //     }
-    //   } catch (err) {
-    //     // Отсутствие интернета
-    //     print(err);
-    //     throw APIException(0);
-    //   }
-    // }
-    // Если все не ок то отправляем код ответа http
-    if (response.statusCode != 200) {
-      throw APIException(response.statusCode, body: response.body);
-    }
-    if (response.body.isNotEmpty) {
-      var responseParams;
-      if (_enableUtf8Decoding) {
-        responseParams = json.decode(utf8.decode(response.body.runes.toList()));
-      } else {
-        responseParams = json.decode(response.body);
-      }
-      // Проверка на Map
-      if (responseParams is! Map) {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log('Response body is not a MAP, convert to {\'key\': response.body}',
-              name: 'API TEST GET: MAP Status');
-        }
-        Map<String, dynamic> res = {'key': responseParams};
-        return res;
-      } else {
-        return Map<String, dynamic>.from(responseParams);
-      }
-    }
-    return {};
-  }
-
-  ///Method HTTP POST
-  Future<Map<String, dynamic>> postRequest(
-      {required String method,
-      bool isAuth = false,
-      bool testMode = false,
-      required Map<String, dynamic> body}) async {
-    //Формирование ссылки запроса
-    Uri url = Uri.parse(_baseUrl! + '$method');
-    // log(url.toString(), name: 'URL');
-    if ((testMode || _globalTestMode) && !_disableState)
-      log(url.toString(), name: 'API TEST POST: URL');
-    // Делаем запрос
-    Response response;
-    //if ((testMode || _globalTestMode) && !_disableState) {
-    try {
-      if (isAuth) {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log(_Token.instance.token.toString(), name: 'API TEST POST: Token');
-          log(getAuthHeader(token: _Token.instance.token).toString(),
-              name: 'API TEST POST: Auth Header');
-          log(jsonEncode(body).toString(), name: 'API TEST POST: Body in JSON');
-        }
-        response = await http.post(url,
-            headers: getAuthHeader(token: _Token.instance.token),
-            body: jsonEncode(body));
-      } else {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log(getNoAuthHeader.toString(),
-              name: 'API TEST POST: NO Auth Header');
-          log(jsonEncode(body).toString(), name: 'API TEST POST: Body in JSON');
-        }
-        response = await http.post(url,
-            body: jsonEncode(body), headers: getNoAuthHeader);
-        // log(jsonEncode(body));
-        // log(response.body);
-      }
-      if ((testMode || _globalTestMode) && !_disableState) {
-        log(response.statusCode.toString(),
-            name: 'API TEST POST: Response Code');
-        if (response.body.isNotEmpty) {
-          String responseBody;
-          if (_enableUtf8Decoding) {
-            responseBody = utf8.decode(response.body.runes.toList());
-          } else {
-            responseBody = response.body;
-          }
-          if (response.body[0] == '{') {
-            log(responseBody, name: 'API TEST GET: Response Body');
-          } else {
-            log(json.decode(responseBody).toString(),
-                name: 'API TEST GET: Response Body');
-          }
-        } else {
-          log('Empty response body', name: 'API TEST GET: Response Body');
-        }
-      }
-    } catch (error) {
-      if (error is SocketException) {
-        if (error.osError != null) if (error.osError!.errorCode == 7) {
-          throw APIException(0, body: 'No Internet connection');
-        }
-      }
-      throw APIException(1, body: error.toString());
-    }
-
-    //  } else {
-    // try {
-    //   if (isAuth) {
-    //     response = await http.post(url,
-    //         headers: getAuthHeader(token: _Token.instance.token),
-    //         body: jsonEncode(body));
-    //   } else {
-    //     response = await http.post(url,
-    //         body: jsonEncode(body), headers: getNoAuthHeader);
-    //   }
-    // } catch (err) {
-    //   throw APIException(0);
-    // }
-    // }
-
-    // Если все не ок то отправляем код ответа http
-    if (response.statusCode != 200) {
-      throw APIException(response.statusCode, body: response.body);
-    }
-    if (response.body.isNotEmpty) {
-      var responseParams;
-      if (_enableUtf8Decoding) {
-        responseParams = json.decode(utf8.decode(response.body.runes.toList()));
-      } else {
-        responseParams = json.decode(response.body);
-      }
-      // Проверка на Map
-      if (responseParams is! Map) {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log('Response body is not a MAP, convert to {\'key\': response.body}',
-              name: 'API TEST POST: MAP Status');
-        }
-        Map<String, dynamic> res = {'key': responseParams};
-        return res;
-      } else {
-        return Map<String, dynamic>.from(responseParams);
-      }
-    }
-    return {};
-  }
-
-  ///Method HTTP PUT
-  Future<Map<String, dynamic>> putRequest(
-      {required String method,
-      bool isAuth = false,
-      bool testMode = false,
-      required Map<String, dynamic> body}) async {
-    //Формирование ссылки запроса
-    Uri url = Uri.parse(_baseUrl! + '$method');
-    if ((testMode || _globalTestMode) && !_disableState)
-      log(url.toString(), name: 'API TEST PUT: URL');
-    // Делаем запрос
-    Response response;
-    // if ((testMode || _globalTestMode) && !_disableState) {
-    try {
-      if (isAuth) {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log(_Token.instance.token.toString(), name: 'API TEST PUT: Token');
-          log(getAuthHeader(token: _Token.instance.token).toString(),
-              name: 'API TEST PUT: Auth Header');
-        }
-        response = await http.put(url,
-            headers: getAuthHeader(token: _Token.instance.token),
-            body: jsonEncode(body));
-        // log('Ответ put ${response.statusCode} - ${response.body}');
-      } else {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log(getNoAuthHeader.toString(), name: 'API TEST PUT: NO Auth Header');
-        }
-        response = await http.put(url,
-            body: jsonEncode(body), headers: getNoAuthHeader);
-      }
-      if ((testMode || _globalTestMode) && !_disableState) {
-        log(jsonEncode(body).toString(), name: 'API TEST PUT: Body in JSON');
-        log(response.statusCode.toString(),
-            name: 'API TEST PUT: Response Code');
-        if (response.body.isNotEmpty) {
-          String responseBody;
-          if (_enableUtf8Decoding) {
-            responseBody = utf8.decode(response.body.runes.toList());
-          } else {
-            responseBody = response.body;
-          }
-          if (response.body[0] == '{') {
-            log(responseBody, name: 'API TEST GET: Response Body');
-          } else {
-            log(json.decode(responseBody).toString(),
-                name: 'API TEST GET: Response Body');
-          }
-        }
-      }
-    } catch (error) {
-      if (error is SocketException) {
-        if (error.osError != null) if (error.osError!.errorCode == 7) {
-          throw APIException(0, body: 'No Internet connection');
-        }
-      }
-      throw APIException(1, body: error.toString());
-    }
-
-    // } else {
-    //   try {
-    //     if (isAuth) {
-    //       response = await http.put(url,
-    //           headers: getAuthHeader(token: _Token.instance.token),
-    //           body: jsonEncode(body));
-    //     } else {
-    //       response = await http.put(url,
-    //           body: jsonEncode(body), headers: getNoAuthHeader);
-    //     }
-    //   } catch (err) {
-    //     // Отсутствие интернета
-    //     throw APIException(0);
-    //   }
-    // }
-
-    // Если все не ок то отправляем код ответа http
-    if (response.statusCode != 200) {
-      throw APIException(response.statusCode, body: response.body);
-    }
-
-    // Десериализация json
-    //var responseParams = json.decode(response.body);
-    if (response.body.isNotEmpty) {
-      var responseParams;
-      if (_enableUtf8Decoding) {
-        responseParams = json.decode(utf8.decode(response.body.runes.toList()));
-      } else {
-        responseParams = json.decode(response.body);
-      }
-      // Проверка на Map
-      if (responseParams is! Map) {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log('Response body is not a MAP, convert to {\'key\': response.body}',
-              name: 'API TEST PUT: MAP Status');
-        }
-        Map<String, dynamic> res = {'key': responseParams};
-        return res;
-      } else {
-        return Map<String, dynamic>.from(responseParams);
-      }
-    }
-    return {};
-  }
-
-  ///Method HTTP DELETE
-  Future<Map<String, dynamic>> deleteRequest(
-      {required String method,
-      bool isAuth = false,
-      bool testMode = false,
-      Map<String, dynamic>? query}) async {
-    // Генерация списка параметром
-    List<String> _queryList = [];
-    if (query != null)
-      query.forEach((key, value) {
-        if (value is List) {
-          for (var el in value) _queryList.add('$key=$el');
-        } else
-          _queryList.add('$key=$value');
-      });
-    if ((testMode || _globalTestMode) && !_disableState)
-      log(_queryList.toString(), name: 'API TEST DELETE: Query List');
-
-    //Формирование ссылки запроса
-    Uri url = Uri.parse(_baseUrl! + '$method?${_queryList.join("&")}');
-    if ((testMode || _globalTestMode) && !_disableState)
-      log(url.toString(), name: 'API TEST DELETE: URL');
-    // Делаем запрос
-    Response response;
-    //  if ((testMode || _globalTestMode) && !_disableState) {
-    try {
-      if (isAuth) {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log(_Token.instance.token.toString(), name: 'API TEST DELETE: Token');
-          log(getAuthHeader(token: _Token.instance.token).toString(),
-              name: 'API TEST DELETE: Auth Header');
-        }
-        response = await http.delete(url,
-            headers: getAuthHeader(token: _Token.instance.token));
-      } else {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log(getNoAuthHeader.toString(),
-              name: 'API TEST DELETE: No Auth Header');
-        }
-        response = await http.delete(url, headers: getNoAuthHeader);
-      }
-      if ((testMode || _globalTestMode) && !_disableState) {
-        log(response.statusCode.toString(),
-            name: 'API TEST DELETE: Response Code');
-        if (response.body.isNotEmpty) {
-          String responseBody;
-          if (_enableUtf8Decoding) {
-            responseBody = utf8.decode(response.body.runes.toList());
-          } else {
-            responseBody = response.body;
-          }
-          if (response.body[0] == '{') {
-            log(responseBody, name: 'API TEST GET: Response Body');
-          } else {
-            log(json.decode(responseBody).toString(),
-                name: 'API TEST GET: Response Body');
-          }
-        }
-      }
-    } catch (error) {
-      if (error is SocketException) {
-        if (error.osError != null) if (error.osError!.errorCode == 7) {
-          throw APIException(0, body: 'No Internet connection');
-        }
-      }
-      throw APIException(1, body: error.toString());
-    }
-
-    // } else {
-    //   try {
-    //     if (isAuth) {
-    //       response = await http.delete(url,
-    //           headers: getAuthHeader(token: _Token.instance.token));
-    //     } else {
-    //       response = await http.delete(url, headers: getNoAuthHeader);
-    //     }
-    //   } catch (err) {
-    //     // Отсутствие интернета
-    //     throw APIException(0);
-    //   }
-    // }
-
-    // Если все не ок то отправляем код ответа http
-    if (response.statusCode != 200) {
-      throw APIException(response.statusCode, body: response.body);
-    }
-
-    // Десериализация json
-    if (response.body.isNotEmpty) {
-      var responseParams;
-      if (_enableUtf8Decoding) {
-        responseParams = json.decode(utf8.decode(response.body.runes.toList()));
-      } else {
-        responseParams = json.decode(response.body);
-      }
-      // Проверка на Map
-      if (responseParams is! Map) {
-        if ((testMode || _globalTestMode) && !_disableState) {
-          log('Response body is not a MAP, convert to {\'key\': response.body}',
-              name: 'API TEST DELETE: MAP Status');
         }
         Map<String, dynamic> res = {'key': responseParams};
         return res;
