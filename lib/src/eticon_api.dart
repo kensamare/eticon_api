@@ -352,13 +352,13 @@ class _ApiST {
           response = await http.get(url, headers: headers);
           break;
         case _TYPE.POST:
-          response = await http.post(url, headers: headers, body: query);
+          response = await http.post(url, headers: headers, body: jsonEncode(query));
           break;
         case _TYPE.DEL:
           response = await http.delete(url, headers: headers);
           break;
         case _TYPE.PUT:
-          response = await http.put(url, headers: headers, body: query);
+          response = await http.put(url, headers: headers, body: jsonEncode(query));
           break;
       }
       if ((testMode || _globalTestMode) && !_disableState) {
