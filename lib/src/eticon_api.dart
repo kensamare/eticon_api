@@ -327,9 +327,9 @@ class _ApiST {
       }
     }
     //Формирование ссылки запроса
-    Uri url = Uri.parse(baseUrl.isNull
+    Uri url = Uri.parse('${baseUrl == null
         ? _baseUrl!
-        : baseUrl! +
+        : baseUrl}' +
             '$method${type == _TYPE.GET || type == _TYPE.DEL ? '?${_queryList.join("&")}' : ''}');
     if ((testMode || _globalTestMode) && !_disableState)
       log(url.toString(), name: 'API TEST $testModeType: URL');
@@ -840,17 +840,5 @@ class _ApiST {
       }
     }
     return {};
-  }
-}
-
-extension NullExtension on Object? {
-  bool get isNull => _checkNull();
-
-  bool _checkNull() {
-    if (this == null) {
-      return true;
-    } else {
-      return false;
-    }
   }
 }
