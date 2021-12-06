@@ -1,3 +1,9 @@
+## 1.3.2
+* loadTokenFromMemory(), now deprecated and token load in init function 
+* Added DartApi class to work with REST api in pure dart
+* Added support for non-json responses
+* Update README
+
 ## 1.3.0
 * Add new "raw" requests
 * Coordinate changes within the work of the package.

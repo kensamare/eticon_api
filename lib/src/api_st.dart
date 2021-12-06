@@ -221,7 +221,7 @@ class ApiST {
         } else {
           responseParams = json.decode(response.body);
         }
-      } catch (e){
+      } catch (e) {
         responseParams = response.body;
       }
       // Проверка на Map

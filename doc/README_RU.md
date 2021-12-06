@@ -141,6 +141,7 @@ Future<void> request() async {
 ## Авторизация
 
 Для авторизированных запросов необходимо установить значение токена. Установленное значение будет записано в память устройства.
+При использование Api.init(), токен автоматически выгрузится из памяти устройства.
 
 ```dart
   Api.setToken('{your_token}');
@@ -152,17 +153,13 @@ Future<void> request() async {
   Api.token;
 ```
 
-При старте приложения, вы можете выгрузить токен записанный в памяти устройства:
+Также можно проверить токен на пустоту или не пустоту:
 
 ```dart
-void main() async {
-  await Api.init(baseUrl: 'https://example.com/');
-  bool tokenLoaded = await Api.loadTokenFromMemory();
-  if(tokenLoaded){
-    print(Api.token);
-  }
-  runApp(MyApp());
-}
+  Api.tokenIsEmpty;//return true or false
+  Api.tokenIsNotEmpty;//return true or false
+```
+
 ```
 Если вы не используете в токене тип ***Bearer***, то отключите его:
 

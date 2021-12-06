@@ -139,6 +139,7 @@ Note!!! that the ***Authorization*** header is added automatically on an authori
 ## Authorization
 
 For authorized requests, you need to set the token value. The set value will be written to the device memory.
+When using Api.init (), the token will be automatically unloaded from the device memory.
 
 ```dart
   Api.setToken('{your_token}');
@@ -150,18 +151,13 @@ Get a token:
   Api.token;
 ```
 
-When the application starts, you can unload the token recorded in the device's memory:
+You can also check the token for emptiness or non-emptiness:
 
 ```dart
-void main() async {
-  await Api.init(baseUrl: 'https://example.com/');
-  bool tokenLoaded = Api.loadTokenFromMemory();
-  if(tokenLoaded){
-    print(Api.token);
-  }
-  runApp(MyApp());
-}
+  Api.tokenIsEmpty;//return true or false
+  Api.tokenIsNotEmpty;//return true or false
 ```
+
 If you do not use the ***Bearer*** type in the token, then disable it:
 
 ```dart

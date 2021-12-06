@@ -31,7 +31,6 @@ dependencies:
   eticon_api:
     git:
       url: https://github.com/kensamare/eticon_api.git
-      ref: master
 
 dev_dependencies:
   flutter_test:
