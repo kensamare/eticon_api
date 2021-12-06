@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 
 void main() async {
   await Api.init(baseUrl: 'https://example.com/');
-  bool tokenLoaded = Api.loadTokenFromMemory();
-  if (tokenLoaded) {
-    print(Api.token);
-  }
   runApp(MyApp());
 }
 
