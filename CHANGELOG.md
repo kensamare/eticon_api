@@ -1,3 +1,7 @@
+## 1.3.3
+* Fix rawGet url
+* Update README
+
 ## 1.3.2
 * loadTokenFromMemory(), now deprecated and token load in init function 
 * Added DartApi class to work with REST api in pure dart
