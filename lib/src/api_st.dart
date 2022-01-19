@@ -143,7 +143,7 @@ class ApiST {
     }
     //Формирование ссылки запроса
     Uri url = Uri.parse('${baseUrl == null ? '${_baseUrl!}$method' : baseUrl}' +
-        '${type == TYPE.GET || type == TYPE.DEL ? '?${_queryList.join("&")}' : ''}');
+        '${(type == TYPE.GET || type == TYPE.DEL) && _queryList.isNotEmpty ? '?${_queryList.join("&")}' : ''}');
     if ((testMode || _globalTestMode) && !_disableState)
       log(url.toString(), name: 'API TEST $testModeType: URL');
     // Делаем запрос
