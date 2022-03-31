@@ -1,6 +1,6 @@
 name: eticon_api
 description: 'This package will help you quickly and easily work with HTTP REQUESTS. All you need to do is select one of the 4 required requests: GET, POST, DELETE, PUT'
-version: 1.3.3
+version: 1.3.8
 homepage: https://github.com/kensamare/eticon_api
 
 environment:

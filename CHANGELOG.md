@@ -1,6 +1,17 @@
+## 1.3.8
+* Custom Auth header title
+
+## 1.3.6
+* Update README
+
+## 1.3.5
+* Api.init now has new parameter loadTokenFromMemory
+
+## 1.3.4
+* Fix rawPost and rawPut headers
+
 ## 1.3.3
 * Fix rawGet url
-* Update README
 
 ## 1.3.2
 * loadTokenFromMemory(), now deprecated and token load in init function 

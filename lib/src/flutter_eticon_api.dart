@@ -13,6 +13,8 @@ class Api {
       bool bearerToken = true,
       disableAllTestMode = false,
       bool enableUtf8Decoding = false,
+      bool loadTokenFromMemory = true,
+      String? authTitle,
       String? storageUrl}) async {
     if (!ApiST.instance.setInitState()) {
       throw EticonApiError(error: 'API class already initialization');
@@ -26,9 +28,16 @@ class Api {
     await GetStorage.init();
 
     ///LoadTokenFromMemory now here
-    String token = GetStorage().read('ApiEticonMainAuthToke2312') ?? '';
-    if (token.isNotEmpty) {
-      Token.instance.setToken(token);
+    if (loadTokenFromMemory) {
+      String token = GetStorage().read('ApiEticonMainAuthToke2312') ?? '';
+      if (token.isNotEmpty) {
+        Token.instance.setToken(token);
+      }
+    } else {
+      Token.instance.setToken('');
+    }
+    if (authTitle != null) {
+      ApiST.instance.setAuthTitle(authTitle);
     }
     ApiST.instance.setBaseUrl(baseUrl);
     ApiST.instance.setGlobalTestMode(globalTestMode);
@@ -220,7 +229,11 @@ class Api {
       bool testMode = false,
       required Map<String, dynamic> body}) async {
     return await ApiST.instance.request(
-        type: TYPE.POST, baseUrl: url, testMode: testMode, query: body);
+        type: TYPE.POST,
+        baseUrl: url,
+        rawHeaders: headers,
+        testMode: testMode,
+        query: body);
   }
 
   /// Sends an HTTP PUT request.
@@ -229,8 +242,12 @@ class Api {
       Map<String, String> headers = const {"Content-type": 'application/json'},
       bool testMode = false,
       required Map<String, dynamic> body}) async {
-    return await ApiST.instance
-        .request(type: TYPE.PUT, baseUrl: url, testMode: testMode, query: body);
+    return await ApiST.instance.request(
+        type: TYPE.PUT,
+        baseUrl: url,
+        rawHeaders: headers,
+        testMode: testMode,
+        query: body);
   }
 
   /// Sends an HTTP DELETE request.

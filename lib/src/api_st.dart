@@ -18,6 +18,8 @@ class ApiST {
   ///Init state of API class
   static bool _init = false;
 
+  static String _authTitle = 'Authorization';
+
   ///Base url int singletons
   static String? _baseUrl;
 
@@ -72,6 +74,9 @@ class ApiST {
     _headers = headers;
   }
 
+  void setAuthTitle(String title){
+    _authTitle = title;
+  }
   ///Sets the base URL for processing requests
   void setBaseUrl(String url) {
     _baseUrl = url;
@@ -96,10 +101,10 @@ class ApiST {
   static Map<String, String> getAuthHeader({required String token}) {
     String tokenMSG = '${_bearerAuth ? 'Bearer ' : ''}$token';
     if (_headers != null) {
-      _headers!["Authorization"] = '${_bearerAuth ? 'Bearer ' : ''}$token';
+      _headers![_authTitle] = '${_bearerAuth ? 'Bearer ' : ''}$token';
       return _headers!;
     }
-    return {"Authorization": '$tokenMSG', "Content-type": 'application/json'};
+    return {"$_authTitle": '$tokenMSG', "Content-type": 'application/json'};
   }
 
   ///Get no Authorization headers
@@ -191,7 +196,7 @@ class ApiST {
           } else {
             responseBody = response.body;
           }
-          if (response.body[0] == '{') {
+          if (response.body[0] != '{') {
             log(responseBody, name: 'API TEST $testModeType: Response Body');
           } else {
             log(json.decode(responseBody).toString(),
