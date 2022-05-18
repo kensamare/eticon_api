@@ -1,3 +1,9 @@
+## 1.3.10
+* Some fix
+
+## 1.3.9
+* Add encode component in url
+
 ## 1.3.8
 * Custom Auth header title
 

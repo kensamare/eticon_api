@@ -134,9 +134,9 @@ class ApiST {
       if (query != null)
         query.forEach((key, value) {
           if (value is List) {
-            for (var el in value) _queryList.add('$key=$el');
+            for (var el in value) _queryList.add('$key=${Uri.encodeComponent(el.toString())}');
           } else
-            _queryList.add('$key=$value');
+            _queryList.add('$key=${Uri.encodeComponent(value.toString())}');
         });
       if ((testMode || _globalTestMode) && !_disableState) {
         log(_queryList.toString(), name: 'API TEST $testModeType: Query List');
@@ -147,8 +147,8 @@ class ApiST {
       }
     }
     //Формирование ссылки запроса
-    Uri url = Uri.parse(Uri.encodeComponent('${baseUrl == null ? '${_baseUrl!}$method' : baseUrl}' +
-        '${(type == TYPE.GET || type == TYPE.DEL) && _queryList.isNotEmpty ? '?${_queryList.join("&")}' : ''}'));
+    Uri url = Uri.parse('${baseUrl == null ? '${_baseUrl!}$method' : baseUrl}' +
+        '${(type == TYPE.GET || type == TYPE.DEL) && _queryList.isNotEmpty ? '?${_queryList.join("&")}' : ''}');
     if ((testMode || _globalTestMode) && !_disableState) log(url.toString(), name: 'API TEST $testModeType: URL');
     // Делаем запрос
     Response response;
