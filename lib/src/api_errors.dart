@@ -12,7 +12,6 @@ class EticonApiError implements Exception {
   }
 
   ///Get error
-  @override
   String? get message => this.error;
 }
 
