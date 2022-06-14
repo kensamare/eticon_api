@@ -49,6 +49,7 @@ class Api {
     }
   }
 
+  static get baseUrl => ApiST.instance.baseUrl;
   ///Checks token storage for emptiness
   static bool tokenIsNotEmpty() {
     if (Token.instance.token.isNotEmpty) {

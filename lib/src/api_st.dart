@@ -124,20 +124,23 @@ class ApiST {
     bool isAuth = false,
     Map<String, String>? rawHeaders,
     bool testMode = false,
-    Map<String, dynamic>? query,
+    Object? query,
   }) async {
     String testModeType = type.toString().replaceAll('TYPE.', '');
 
     ///Генерация параметров
     List<String> _queryList = [];
     if (type == TYPE.GET || type == TYPE.DEL) {
-      if (query != null)
+      if (query != null && query is Map)
         query.forEach((key, value) {
           if (value is List) {
             for (var el in value) _queryList.add('$key=${Uri.encodeComponent(el.toString())}');
           } else
             _queryList.add('$key=${Uri.encodeComponent(value.toString())}');
         });
+      else if (query != null) {
+        _queryList.add(query.toString());
+      }
       if ((testMode || _globalTestMode) && !_disableState) {
         log(_queryList.toString(), name: 'API TEST $testModeType: Query List');
       }
@@ -171,13 +174,13 @@ class ApiST {
           response = await http.get(url, headers: headers);
           break;
         case TYPE.POST:
-          response = await http.post(url, headers: headers, body: jsonEncode(query));
+          response = await http.post(url, headers: headers, body: query is Map ? jsonEncode(query) : query);
           break;
         case TYPE.DEL:
           response = await http.delete(url, headers: headers);
           break;
         case TYPE.PUT:
-          response = await http.put(url, headers: headers, body: jsonEncode(query));
+          response = await http.put(url, headers: headers, body: query is Map ? jsonEncode(query) : query);
           break;
       }
       if ((testMode || _globalTestMode) && !_disableState) {
