@@ -1,2 +1,2 @@
 ///Type enum
-enum TYPE { GET, POST, DEL, PUT }
+enum TYPE { GET, POST, DEL, PUT, PATCH }

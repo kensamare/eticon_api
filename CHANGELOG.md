@@ -1,3 +1,9 @@
+## 1.3.11
+* Add PATCH
+* Add functionality for refresh token
+* Remove loadTokenFromMemory()
+* Some fix
+
 ## 1.3.10
 * Some fix
 

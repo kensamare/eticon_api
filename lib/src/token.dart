@@ -16,4 +16,27 @@ class Token {
   void setToken(String t) {
     _t = t;
   }
+
+  ///Private token
+  static String _refresh = '';
+
+  ///Get token
+  String get refreshToken => _refresh;
+
+  ///Set token
+  void setRefreshToken(String t) {
+    _refresh = t;
+  }
+
+  ///Private token
+  static DateTime _expire = DateTime.now();
+
+  ///Get token
+  DateTime get expireDate => _expire;
+
+  ///Set token
+  void setExpire(int seconds) {
+    _expire = DateTime.now().add(Duration(seconds: seconds));
+  }
+
 }

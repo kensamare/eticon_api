@@ -182,6 +182,9 @@ class ApiST {
         case TYPE.PUT:
           response = await http.put(url, headers: headers, body: query is Map ? jsonEncode(query) : query);
           break;
+        case TYPE.PATCH:
+          response = await http.patch(url, headers: headers, body: query is Map ? jsonEncode(query) : query);
+          break;
       }
       if ((testMode || _globalTestMode) && !_disableState) {
         log(response.statusCode.toString(), name: 'API TEST $testModeType: Response Code');
