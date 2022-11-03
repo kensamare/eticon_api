@@ -140,50 +140,58 @@ class DartApi {
   // }
 
   /// Sends an HTTP GET request.
+  /// Sends an HTTP GET request.
   static Future<Map<String, dynamic>> get(
       {required String url,
-      Map<String, String> headers = const {"Content-type": 'application/json'},
-      bool testMode = false,
-      Map<String, dynamic>? query}) async {
+        Map<String, String> headers = const {"Content-type": 'application/json'},
+        bool testMode = false,
+        Map<String, dynamic>? query,
+        int urlIndex = 0}) async {
     return await ApiST.instance.request(
-        type: TYPE.GET,
-        baseUrl: url,
-        rawHeaders: headers,
-        testMode: testMode,
-        query: query);
+        type: TYPE.GET, baseUrl: url, rawHeaders: headers, testMode: testMode, query: query, urlIndex: urlIndex);
   }
 
   /// Sends an HTTP POST request.
   static Future<Map<String, dynamic>> post(
       {required String url,
-      Map<String, String> headers = const {"Content-type": 'application/json'},
-      bool testMode = false,
-      required Map<String, dynamic> body}) async {
+        Map<String, String> headers = const {"Content-type": 'application/json'},
+        bool testMode = false,
+        required Object body,
+        int urlIndex = 0}) async {
     return await ApiST.instance.request(
-        type: TYPE.POST, baseUrl: url, testMode: testMode, query: body);
+        type: TYPE.POST, baseUrl: url, rawHeaders: headers, testMode: testMode, query: body, urlIndex: urlIndex);
   }
 
   /// Sends an HTTP PUT request.
   static Future<Map<String, dynamic>> put(
       {required String url,
-      Map<String, String> headers = const {"Content-type": 'application/json'},
-      bool testMode = false,
-      required Map<String, dynamic> body}) async {
-    return await ApiST.instance
-        .request(type: TYPE.PUT, baseUrl: url, testMode: testMode, query: body);
+        Map<String, String> headers = const {"Content-type": 'application/json'},
+        bool testMode = false,
+        required Map<String, dynamic> body,
+        int urlIndex = 0}) async {
+    return await ApiST.instance.request(
+        type: TYPE.PUT, baseUrl: url, rawHeaders: headers, testMode: testMode, query: body, urlIndex: urlIndex);
   }
 
   /// Sends an HTTP DELETE request.
   static Future<Map<String, dynamic>> delete(
       {required String url,
-      Map<String, String> headers = const {"Content-type": 'application/json'},
-      bool testMode = false,
-      Map<String, dynamic>? query}) async {
+        Map<String, String> headers = const {"Content-type": 'application/json'},
+        bool testMode = false,
+        Map<String, dynamic>? query,
+        int urlIndex = 0}) async {
     return await ApiST.instance.request(
-        type: TYPE.DEL,
-        baseUrl: url,
-        rawHeaders: headers,
-        testMode: testMode,
-        query: query);
+        type: TYPE.DEL, baseUrl: url, rawHeaders: headers, testMode: testMode, query: query, urlIndex: urlIndex);
+  }
+
+  /// Sends an HTTP PUT request.
+  static Future<Map<String, dynamic>> patch(
+      {required String url,
+        Map<String, String> headers = const {"Content-type": 'application/json'},
+        bool testMode = false,
+        required Map<String, dynamic> body,
+        int urlIndex = 0}) async {
+    return await ApiST.instance.request(
+        type: TYPE.PATCH, baseUrl: url, rawHeaders: headers, testMode: testMode, query: body, urlIndex: urlIndex);
   }
 }
