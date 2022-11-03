@@ -94,8 +94,11 @@ class Api {
     Token.instance.setToken(token);
   }
 
+  ///Return refresh token
+  static String? get refreshToken => Token.instance.refreshToken;
+
   ///Return Authorization token
-  static String? get refreshToken => Token.instance.token;
+  static DateTime get expireDate => Token.instance.expireDate;
 
   ///Clear Token
   static void clearRefreshToken() => Token.instance.setRefreshToken('');
@@ -124,8 +127,8 @@ class Api {
     Token.instance.setExpire(seconds);
   }
 
-  ///Check refresh token for expire
-  static bool get isRefreshTokenExpire => DateTime.now().isAfter(Token.instance.expireDate);
+  ///Check token for expire
+  static bool get isTokenExpire => DateTime.now().isAfter(Token.instance.expireDate);
 
   /// Sends an HTTP GET request.
   static Future<Map<String, dynamic>> get(
