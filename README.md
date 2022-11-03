@@ -23,7 +23,7 @@ void main() async {
 |__Parameters__|__Request type__|__Value__|
 | isAuth | ALL | If the value is ***true***, the request will be authorized |
 | method | ALL | Accepts a string appended to ***baseURL*** |
-| body | POST, PUT | Accepts request body in ***Map*** |
+| body | POST, PUT, PATCH | Accepts request body in ***Map*** |
 | query | GET, DELETE | Accepts query in ***Map*** |
 | testMode| ALL | if ***true*** shows detailed information about the request |
 
@@ -75,6 +75,18 @@ Future<void> putRequest() async {
   }
 ```
 
+### PATCH
+
+```dart
+Future<void> patchRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.patch(method: 'product', body: {"id": 5}, isAuth: true);
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+
 ## Raw Methods
 
 All raw methods take the url to be requested. In case of GET and DELETE without parameters.
@@ -120,6 +132,16 @@ Future<void> request() async {
 }
 ```
 
+```dart
+Future<void> request() async {
+  try{
+    Map<String, dynamic> response = await Api.rawPatch(url: 'https://example.com/profile', body: {"id": 5}, headers: {"Content-type": 'application/json'});
+  } on APIException catch(error){
+    print('ERROR CODE: ${error.code}');
+  }
+}
+```
+
 ## HTTP status codes
 
 If the result of the status code in the response is not 200, then **APIException** will be thrown. It contains the status code as well as the response body.
@@ -158,6 +180,11 @@ Get a token:
   Api.token;
 ```
 
+Clear token:
+```dart
+  Api.clearToken();
+```
+
 You can also check the token for emptiness or non-emptiness:
 
 ```dart
@@ -172,6 +199,45 @@ void main() async {
   await Api.init(baseUrl: 'https://example.com/', bearerToken: false);
   runApp(MyApp());
 }
+```
+
+## Refresh token
+by analogy with the authorization token, you can use the refresh token:
+``` dart
+   Api.setRefreshToken('{your_token}');
+```
+
+Get a token:
+
+``` dart
+   Api.refreshToken;
+```
+
+Clear token:
+``` dart
+   Api.clearRefreshToken();
+```
+
+You can also check if the token is empty or not empty:
+
+``` dart
+   Api.refreshTokenIsEmpty;//return true or false
+   Api.refreshTokenIsNotEmpty;//return true or false
+```
+
+Set token expiration time in seconds:
+``` dart
+   Api.setExpire(3600);
+```
+
+Checking if the authorization token has expired:
+``` dart
+   Api.isTokenExpire;
+```
+
+Get the expiration date of the authorization token:
+``` dart
+   Api.expireDate;
 ```
 
 ## Test Mode
