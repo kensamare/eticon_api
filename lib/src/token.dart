@@ -29,10 +29,13 @@ class Token {
   }
 
   ///Private token
-  static DateTime _expire = DateTime.now();
+  static DateTime _expire = DateTime(1970);
 
   ///Get token
   DateTime get expireDate => _expire;
+
+  ///Get token
+  set expireDate(DateTime t) => _expire = t;
 
   ///Set token
   void setExpire(int seconds) {

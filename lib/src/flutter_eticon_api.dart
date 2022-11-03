@@ -36,6 +36,11 @@ class Api {
       if (token.isNotEmpty) {
         Token.instance.setRefreshToken(token);
       }
+      String expireTimeString = GetStorage().read('ApiEticonMainExpireDate2312') ?? '';
+      if(expireTimeString.isNotEmpty){
+      DateTime expireTime = DateTime.parse(GetStorage().read('ApiEticonMainExpireDate2312'));
+        Token.instance.expireDate = expireTime;
+      }
     } else {
       Token.instance.setToken('');
       Token.instance.setRefreshToken('');
@@ -98,7 +103,7 @@ class Api {
   static String? get refreshToken => Token.instance.refreshToken;
 
   ///Return Authorization token
-  static DateTime get expireDate => Token.instance.expireDate;
+  static DateTime? get expireDate => Token.instance.expireDate.year == 1970 ? null : Token.instance.expireDate;
 
   ///Clear Token
   static void clearRefreshToken() => Token.instance.setRefreshToken('');
@@ -124,7 +129,11 @@ class Api {
 
   ///Set refresh token expire in seconds. Fro check you can use Api.isRefreshTokenExpire
   static void setExpire({required int seconds}) {
+    if (!ApiST.instance.initState) {
+      throw EticonApiError(error: 'Need Api.init() before setRefreshToken');
+    }
     Token.instance.setExpire(seconds);
+    GetStorage().write('ApiEticonMainExpireDate2312', Token.instance.expireDate.toString());
   }
 
   ///Check token for expire

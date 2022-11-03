@@ -1,3 +1,6 @@
+## 1.3.12
+* Update README
+
 ## 1.3.11
 * Add PATCH
 * Add functionality for refresh token
