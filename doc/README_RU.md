@@ -24,7 +24,7 @@ void main() async {
 |__Поля__|__Тип запроса__|__Значение__|
 | isAuth | Все | При значении ***true*** запрос будет авторизированным |
 | method | Все | Принимает строку, которая добавляется к ***baseURL*** |
-| body | POST, PUT | Принимает тело запроса в ***Map*** |
+| body | POST, PUT, PATCH | Принимает тело запроса в ***Map*** |
 | query | GET, DELETE | Принимает параметры в ***Map*** |
 | testMode| Все | При значении ***true*** показывает подробную информацию о запросе |
 
@@ -70,6 +70,17 @@ Future<void> deleteRequest() async {
 Future<void> putRequest() async {
     try{
       Map<String, dynamic> response = await Api.put(method: 'product', body: {"id": 5}, isAuth: true);
+    } on APIException catch(error){
+      print('ERROR CODE: ${error.code}');
+    }
+  }
+```
+### PATCH
+
+```dart
+Future<void> patchRequest() async {
+    try{
+      Map<String, dynamic> response = await Api.patch(method: 'product', body: {"id": 5}, isAuth: true);
     } on APIException catch(error){
       print('ERROR CODE: ${error.code}');
     }
@@ -121,6 +132,16 @@ Future<void> request() async {
 }
 ```
 
+```dart
+Future<void> request() async {
+  try{
+    Map<String, dynamic> response = await Api.rawPatch(url: 'https://example.com/profile', body: {"id": 5}, headers: {"Content-type": 'application/json'});
+  } on APIException catch(error){
+    print('ERROR CODE: ${error.code}');
+  }
+}
+```
+
 ## Коды состояний HTTP
 
 Если результат кода состояния в ответе будет не равен 200, тогда сработает **APIException**. Он содержит в себе код состояния, а также тело ответа.
@@ -153,6 +174,11 @@ Future<void> request() async {
   Api.token;
 ```
 
+Очистить токен:
+```dart
+  Api.clearToken();
+```
+
 Также можно проверить токен на пустоту или не пустоту:
 
 ```dart
@@ -168,6 +194,45 @@ void main() async {
   await Api.init(baseUrl: 'https://example.com/', bearerToken: false);
   runApp(MyApp());
 }
+```
+
+## Рефреш токен
+по аналогии с токеном авторизации можно использовать рефреш токен:
+```dart
+  Api.setRefreshToken('{your_token}');
+```
+
+Получить токен:
+
+```dart
+  Api.refreshToken;
+```
+
+Очистить токен:
+```dart
+  Api.clearRefreshToken();
+```
+
+Также можно проверить токен на пустоту или не пустоту:
+
+```dart
+  Api.refreshTokenIsEmpty;//return true or false
+  Api.refreshTokenIsNotEmpty;//return true or false
+```
+
+Установить время истекания токена в секундах:
+```dart
+  Api.setExpire(3600);
+```
+
+Проверка, что токен авторизации истек:
+```dart
+  Api.isTokenExpire;
+```
+
+Получить дату истекания токена авторизации:
+```dart
+  Api.expireDate;
 ```
 
 ## Test Mode
