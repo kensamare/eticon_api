@@ -18,36 +18,25 @@ class EticonApiError implements Exception {
 }
 
 ///ApiException class show http error
-class APIException extends DioError {
+class APIException implements Exception {
   ///Error code
   late int code;
 
   ///Error body
   dynamic body;
 
-  APIException(this.code, RequestOptions options, Response response, DioErrorType type, dynamic error, {this.body})
-      : super(
-          requestOptions: options,
-          response: response,
-          type: type,
-          error: error,
-        );
+  DioError? error;
 
-  APIException.fromDioError(DioError err)
-      : super(
-          requestOptions: err.requestOptions,
-          response: err.response,
-          type: err.type,
-          error: err.error,
-        ) {
-    code = err.response?.statusCode ?? 0;
-    body = err.error?.toString() ?? '';
-    stackTrace = null;
+  APIException.fromDio(this.error){
+    code = error!.response?.statusCode ?? 0;
+    body = error!.error?.toString() ?? '';
   }
+
+  APIException(this.code, {this.body});
 
   ///GetError
   @override
   String toString() {
-    return '\n[APIException] Error code: $code, Error: ${body.toString()}, Data: ${response?.data.toString()}';
+    return '\n[APIException] Error code: $code, Error: ${body.toString()}, ${error != null ? 'Data: ${error!.response?.data.toString()}' : ''}';
   }
 }

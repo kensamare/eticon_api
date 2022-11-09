@@ -1,14 +1,8 @@
 import 'package:eticon_api/eticon_api.dart';
+import 'package:eticon_api/src/api_errors.dart';
 import 'package:eticon_api/src/dio_api_st.dart';
 import 'package:eticon_api/src/token.dart';
 import 'package:get_storage/get_storage.dart';
-
-// class NewApi{
-//   static Future<Map<String, dynamic>> get(String path,{Map<String, dynamic>? query}) async {
-//     Response res = await Dio().request(path, queryParameters: query);
-//     return res.data;
-//   }
-// }
 
 class Api {
   ///Initialization API class
@@ -155,7 +149,7 @@ class Api {
       Map<String, dynamic>? query,
       Map<String, String>? headers,
       CancelToken? cancelToken,
-      ResponseType responseType = ResponseType.data,
+      ResponseType responseType = ResponseType.map_data,
       int urlIndex = 0}) async {
     if (DioApiST.instance.urls.isEmpty) {
       throw EticonApiError(error: 'Base url not set, use Api.init()');
@@ -173,7 +167,7 @@ class Api {
         isAuth: isAuth,
         testMode: testMode,
         headers: headers,
-        responseType: responseType ?? ResponseType.json,
+        responseType: responseType,
         cancelToken: cancelToken,
         data: query,
         urlIndex: urlIndex);
@@ -186,7 +180,7 @@ class Api {
         dynamic body,
         Map<String, String>? headers,
         CancelToken? cancelToken,
-        ResponseType responseType = ResponseType.data,
+        ResponseType responseType = ResponseType.map_data,
         int urlIndex = 0}) async {
     if (DioApiST.instance.urls.isEmpty) {
       throw EticonApiError(error: 'Base url not set, use Api.init()');
@@ -204,7 +198,7 @@ class Api {
         isAuth: isAuth,
         testMode: testMode,
         headers: headers,
-        responseType: responseType ?? ResponseType.json,
+        responseType: responseType,
         cancelToken: cancelToken,
         data: body,
         urlIndex: urlIndex);
@@ -217,7 +211,7 @@ class Api {
         dynamic body,
         Map<String, String>? headers,
         CancelToken? cancelToken,
-        ResponseType responseType = ResponseType.data,
+        ResponseType responseType = ResponseType.map_data,
         int urlIndex = 0}) async {
     if (DioApiST.instance.urls.isEmpty) {
       throw EticonApiError(error: 'Base url not set, use Api.init()');
@@ -235,7 +229,7 @@ class Api {
         isAuth: isAuth,
         testMode: testMode,
         headers: headers,
-        responseType: responseType ?? ResponseType.json,
+        responseType: responseType ?? ResponseType.map_data,
         cancelToken: cancelToken,
         data: body,
         urlIndex: urlIndex);
@@ -248,7 +242,7 @@ class Api {
         Map<String, dynamic>? query,
         Map<String, String>? headers,
         CancelToken? cancelToken,
-        ResponseType responseType = ResponseType.data,
+        ResponseType responseType = ResponseType.map_data,
         int urlIndex = 0}) async {
     if (DioApiST.instance.urls.isEmpty) {
       throw EticonApiError(error: 'Base url not set, use Api.init()');
@@ -266,7 +260,7 @@ class Api {
         isAuth: isAuth,
         testMode: testMode,
         headers: headers,
-        responseType: responseType ?? ResponseType.json,
+        responseType: responseType,
         cancelToken: cancelToken,
         data: query,
         urlIndex: urlIndex);
@@ -279,7 +273,7 @@ class Api {
         dynamic body,
         Map<String, String>? headers,
         CancelToken? cancelToken,
-        ResponseType responseType = ResponseType.data,
+        ResponseType responseType = ResponseType.map_data,
         int urlIndex = 0}) async {
     if (DioApiST.instance.urls.isEmpty) {
       throw EticonApiError(error: 'Base url not set, use Api.init()');
@@ -297,9 +291,11 @@ class Api {
         isAuth: isAuth,
         testMode: testMode,
         headers: headers,
-        responseType: responseType ?? ResponseType.json,
+        responseType: responseType,
         cancelToken: cancelToken,
         data: body,
         urlIndex: urlIndex);
   }
 }
+
+enum ResponseType {jsonResponse, stream, plain, byte, map_data}

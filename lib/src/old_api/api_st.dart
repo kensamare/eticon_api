@@ -1,12 +1,10 @@
+import 'package:eticon_api/src/api_errors.dart';
 import 'package:eticon_api/src/token.dart';
-import 'package:eticon_api/src/type.dart';
+import 'package:eticon_api/src/old_api/type.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart' show Response;
 import 'dart:convert';
 import 'dart:developer';
-
-import 'api_errors.dart';
-
 
 ///Api singleton
 class ApiST {

@@ -1,8 +1,8 @@
+import 'package:eticon_api/src/api_errors.dart';
 import 'package:eticon_api/src/token.dart';
-import 'package:eticon_api/src/type.dart';
+import 'package:eticon_api/src/old_api/type.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'api_errors.dart';
 import 'api_st.dart';
 
 

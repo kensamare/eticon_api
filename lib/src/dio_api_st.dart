@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart' as d;
 import 'package:eticon_api/src/api_errors.dart';
+import 'package:eticon_api/src/flutter_eticon_api.dart';
 import 'package:eticon_api/src/token.dart';
-import 'package:eticon_api/src/type.dart';
+import 'package:eticon_api/src/old_api/type.dart';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -125,7 +126,7 @@ class DioApiST {
     Map<String, String>? headers,
     bool testMode = false,
     int urlIndex = 0,
-    ResponseType responseType = ResponseType.json,
+    ResponseType responseType = ResponseType.map_data,
     d.CancelToken? cancelToken,
     dynamic data,
   }) async {
@@ -162,7 +163,7 @@ class DioApiST {
         log(allHeaders.toString(), name: 'API TEST $testModeType: Headers');
       }
       d.ResponseType? responseTypeFinal;
-      if (responseType != ResponseType.data) {
+      if (responseType != ResponseType.map_data) {
         responseTypeFinal = d.ResponseType.values[responseType.index];
       }
       d.Response response = await dio.request(
@@ -179,7 +180,7 @@ class DioApiST {
           log(response.data.toString(), name: 'API TEST $testModeType: Response Body');
         }
       }
-      if(responseType == ResponseType.data) {
+      if(responseType == ResponseType.map_data) {
         try {
           if (response.data is String) {
             Map<String, dynamic> result = {};
@@ -202,17 +203,10 @@ class DioApiST {
           return response.data;
         }
       }
+      return response;
     }on d.DioError catch (error) {
-     APIException err = APIException.fromDioError(error);
-      // if ((testMode || _globalTestMode) && !_disableState) {
-      //   log(err.code.toString(), name: 'API TEST $testModeType: Response Code');
-      //   if (err.response?.data != null) {
-      //       log(err.response!.data.toString(), name: 'API TEST $testModeType: Response Body');
-      //     }
-      //   }
-      throw APIException.fromDioError(error);
+      log('TUT');
+      throw APIException.fromDio(error);
     }
   }
 }
-
-enum ResponseType {json, stream, plain, byte, data}
