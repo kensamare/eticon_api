@@ -180,7 +180,7 @@ class DioApiST {
           log(response.data.toString(), name: 'API TEST $testModeType: Response Body');
         }
       }
-      if(responseType == ResponseType.map_data) {
+      if (responseType == ResponseType.map_data) {
         try {
           if (response.data is String) {
             Map<String, dynamic> result = {};
@@ -190,22 +190,28 @@ class DioApiST {
             } else {
               responseBody = response.data;
             }
-            result  = jsonDecode(responseBody);
+            result = jsonDecode(responseBody);
             if (response.data[0] != '{') {
-              result ['key'] = json;
+              result['key'] = json;
             }
             return result;
-          } else{
+          } else {
             return response.data;
           }
-        }
-        catch (e) {
+        } catch (e) {
           return response.data;
         }
       }
       return response;
-    }on d.DioError catch (error) {
-      log('TUT');
+    } on d.DioError catch (error) {
+      if ((testMode || _globalTestMode) && !_disableState) {
+        if (error.response != null) {
+          log(error.response!.statusCode.toString(), name: 'API TEST $testModeType: Response Code');
+          if (error.response!.data != null) {
+            log(error.response!.data.toString(), name: 'API TEST $testModeType: Response Body');
+          }
+        }
+      }
       throw APIException.fromDio(error);
     }
   }
