@@ -1,11 +1,12 @@
+import 'package:eticon_api/src/token.dart';
+import 'package:eticon_api/src/type.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart' show Response;
 import 'dart:convert';
 import 'dart:developer';
 
 import 'api_errors.dart';
-import '../token.dart';
-import '../type.dart';
+
 
 ///Api singleton
 class ApiST {
@@ -21,7 +22,7 @@ class ApiST {
   static String _authTitle = 'Authorization';
 
   ///Base url int singletons
-  static String? _baseUrl;
+  static List<String> _urls = [];
 
   ///Storage url int singletons
   static String? _storageUrl;
@@ -63,7 +64,7 @@ class ApiST {
   }
 
   ///Return baseUrl
-  String? get baseUrl => _baseUrl;
+  List<String> get urls => _urls;
 
   ///Return storageUrl
   ///Link to the data store, which is needed to get various data
@@ -79,8 +80,8 @@ class ApiST {
   }
 
   ///Sets the base URL for processing requests
-  void setBaseUrl(String url) {
-    _baseUrl = url;
+  void setUrls(List<String> url) {
+    _urls = url;
   }
 
   ///Sets the storage URL for get data
@@ -120,6 +121,7 @@ class ApiST {
   Future<Map<String, dynamic>> request({
     required TYPE type,
     String? baseUrl,
+    required int urlIndex,
     String? method,
     bool isAuth = false,
     Map<String, String>? rawHeaders,
@@ -150,7 +152,7 @@ class ApiST {
       }
     }
     //Формирование ссылки запроса
-    Uri url = Uri.parse('${baseUrl == null ? '${_baseUrl!}$method' : baseUrl}' +
+    Uri url = Uri.parse('${baseUrl == null ? '${_urls[urlIndex]}$method' : baseUrl}' +
         '${(type == TYPE.GET || type == TYPE.DEL) && _queryList.isNotEmpty ? '?${_queryList.join("&")}' : ''}');
     if ((testMode || _globalTestMode) && !_disableState) log(url.toString(), name: 'API TEST $testModeType: URL');
     // Делаем запрос
