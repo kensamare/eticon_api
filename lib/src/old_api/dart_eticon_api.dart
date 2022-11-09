@@ -1,5 +1,7 @@
-import 'api_st.dart';
-import 'type.dart';
+
+
+import 'package:eticon_api/src/old_api/api_st.dart';
+import 'package:eticon_api/src/type.dart';
 
 class DartApi {
   // ///Initialization API class

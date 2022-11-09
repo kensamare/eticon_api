@@ -2,5 +2,5 @@
 
 library eticon_api;
 
-export 'src/flutter_eticon_api.dart';
-export 'src/api_errors.dart';
+export 'src/old_api/flutter_eticon_api.dart';
+export 'src/old_api/api_errors.dart';

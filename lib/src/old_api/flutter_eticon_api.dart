@@ -1,18 +1,10 @@
-import 'package:dio/dio.dart';
 import 'package:eticon_api/eticon_api.dart';
 import 'package:eticon_api/src/old_api/api_st.dart';
 import 'package:eticon_api/src/token.dart';
 import 'package:eticon_api/src/type.dart';
 import 'package:get_storage/get_storage.dart';
 
-class Api{
-  static Future<Map<String, dynamic>> get(String path, Map<String, dynamic>? query) async {
-    Response res = await Dio().get(path, queryParameters: query);
-    return res.data;
-  }
-}
-
-class OldApi {
+class Api {
   ///Initialization API class
   static Future<void> init(
       {required String baseUrl,
@@ -44,8 +36,8 @@ class OldApi {
         Token.instance.setRefreshToken(token);
       }
       String expireTimeString = GetStorage().read('ApiEticonMainExpireDate2312') ?? '';
-      if (expireTimeString.isNotEmpty) {
-        DateTime expireTime = DateTime.parse(GetStorage().read('ApiEticonMainExpireDate2312'));
+      if(expireTimeString.isNotEmpty){
+      DateTime expireTime = DateTime.parse(GetStorage().read('ApiEticonMainExpireDate2312'));
         Token.instance.expireDate = expireTime;
       }
     } else {

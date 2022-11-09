@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'api_errors.dart';
-import 'token.dart';
-import 'type.dart';
+import '../token.dart';
+import '../type.dart';
 
 ///Api singleton
 class ApiST {
