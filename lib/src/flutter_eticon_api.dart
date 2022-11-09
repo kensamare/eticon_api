@@ -5,14 +5,14 @@ import 'package:eticon_api/src/token.dart';
 import 'package:eticon_api/src/type.dart';
 import 'package:get_storage/get_storage.dart';
 
-class Api{
+class NewApi{
   static Future<Map<String, dynamic>> get(String path, Map<String, dynamic>? query) async {
     Response res = await Dio().get(path, queryParameters: query);
     return res.data;
   }
 }
 
-class OldApi {
+class Api {
   ///Initialization API class
   static Future<void> init(
       {required String baseUrl,
