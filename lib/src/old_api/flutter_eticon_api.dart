@@ -66,83 +66,83 @@ class OldApi {
   // static get baseUrl => ApiST.instance.baseUrl;
 
   ///Help to get url to resource in server storage
-  static String dataFromStorage(String path) {
-    if (ApiST.instance.storageUrl == null) {
-      throw APIException(-1, body: 'Storage url is null, set storageUrl in Api.init()');
-    } else {
-      return '${ApiST.instance.storageUrl}$path';
-    }
-  }
-
-  ///Set headers. Default is only "Content-type": application/json
-  static void setHeaders(Map<String, String> headers) {
-    ApiST.instance.setHeaders(headers);
-  }
-
-  ///Return Authorization token
-  static String? get token => Token.instance.token;
-
-  ///Checks token storage for emptiness
-  static bool tokenIsNotEmpty() {
-    return Token.instance.token.isNotEmpty;
-  }
-
-  ///Checks token storage for emptiness
-  static bool tokenIsEmpty() {
-    return Token.instance.token.isEmpty;
-  }
-
-  ///Clear Token
-  static void clearToken() => Token.instance.setToken('');
-
-  ///Set Authorization token
-  static void setToken(String token) {
-    if (!ApiST.instance.initState) {
-      throw APIException(-1, body: 'Need Api.init() before setToken');
-    }
-    GetStorage().write('ApiEticonMainAuthToken2312', token);
-    Token.instance.setToken(token);
-  }
-
-  ///Return refresh token
-  static String? get refreshToken => Token.instance.refreshToken;
-
-  ///Return Authorization token
-  static DateTime? get expireDate => Token.instance.expireDate.year == 1970 ? null : Token.instance.expireDate;
-
-  ///Clear Token
-  static void clearRefreshToken() => Token.instance.setRefreshToken('');
-
-  ///Checks token storage for emptiness
-  static bool refreshTokenIsNotEmpty() {
-    return Token.instance.token.isNotEmpty;
-  }
-
-  ///Checks token storage for emptiness
-  static bool refreshTokenIsEmpty() {
-    return Token.instance.token.isEmpty;
-  }
-
-  ///Set refresh token
-  static void setRefreshToken(String token) {
-    if (!ApiST.instance.initState) {
-      throw APIException(-1, body: 'Need Api.init() before setRefreshToken');
-    }
-    GetStorage().write('ApiEticonMainRefreshToken2312', token);
-    Token.instance.setRefreshToken(token);
-  }
-
-  ///Set refresh token expire in seconds. Fro check you can use Api.isRefreshTokenExpire
-  static void setExpire({required int seconds}) {
-    if (!ApiST.instance.initState) {
-      throw APIException(-1, body: 'Need Api.init() before setRefreshToken');
-    }
-    Token.instance.setExpire(seconds);
-    GetStorage().write('ApiEticonMainExpireDate2312', Token.instance.expireDate.toString());
-  }
-
-  ///Check token for expire
-  static bool get isTokenExpire => DateTime.now().isAfter(Token.instance.expireDate);
+  // static String dataFromStorage(String path) {
+  //   if (ApiST.instance.storageUrl == null) {
+  //     throw APIException(-1, body: 'Storage url is null, set storageUrl in Api.init()');
+  //   } else {
+  //     return '${ApiST.instance.storageUrl}$path';
+  //   }
+  // }
+  //
+  // ///Set headers. Default is only "Content-type": application/json
+  // static void setHeaders(Map<String, String> headers) {
+  //   ApiST.instance.setHeaders(headers);
+  // }
+  //
+  // ///Return Authorization token
+  // static String? get token => Token.instance.token;
+  //
+  // ///Checks token storage for emptiness
+  // static bool tokenIsNotEmpty() {
+  //   return Token.instance.token.isNotEmpty;
+  // }
+  //
+  // ///Checks token storage for emptiness
+  // static bool tokenIsEmpty() {
+  //   return Token.instance.token.isEmpty;
+  // }
+  //
+  // ///Clear Token
+  // static void clearToken() => Token.instance.setToken('');
+  //
+  // ///Set Authorization token
+  // static void setToken(String token) {
+  //   if (!ApiST.instance.initState) {
+  //     throw APIException(-1, body: 'Need Api.init() before setToken');
+  //   }
+  //   GetStorage().write('ApiEticonMainAuthToken2312', token);
+  //   Token.instance.setToken(token);
+  // }
+  //
+  // ///Return refresh token
+  // static String? get refreshToken => Token.instance.refreshToken;
+  //
+  // ///Return Authorization token
+  // static DateTime? get expireDate => Token.instance.expireDate.year == 1970 ? null : Token.instance.expireDate;
+  //
+  // ///Clear Token
+  // static void clearRefreshToken() => Token.instance.setRefreshToken('');
+  //
+  // ///Checks token storage for emptiness
+  // static bool refreshTokenIsNotEmpty() {
+  //   return Token.instance.token.isNotEmpty;
+  // }
+  //
+  // ///Checks token storage for emptiness
+  // static bool refreshTokenIsEmpty() {
+  //   return Token.instance.token.isEmpty;
+  // }
+  //
+  // ///Set refresh token
+  // static void setRefreshToken(String token) {
+  //   if (!ApiST.instance.initState) {
+  //     throw APIException(-1, body: 'Need Api.init() before setRefreshToken');
+  //   }
+  //   GetStorage().write('ApiEticonMainRefreshToken2312', token);
+  //   Token.instance.setRefreshToken(token);
+  // }
+  //
+  // ///Set refresh token expire in seconds. Fro check you can use Api.isRefreshTokenExpire
+  // static void setExpire({required int seconds}) {
+  //   if (!ApiST.instance.initState) {
+  //     throw APIException(-1, body: 'Need Api.init() before setRefreshToken');
+  //   }
+  //   Token.instance.setExpire(seconds);
+  //   GetStorage().write('ApiEticonMainExpireDate2312', Token.instance.expireDate.toString());
+  // }
+  //
+  // ///Check token for expire
+  // static bool get isTokenExpire => DateTime.now().isAfter(Token.instance.expireDate);
 
   /// Sends an HTTP GET request.
   static Future<Map<String, dynamic>> get(
