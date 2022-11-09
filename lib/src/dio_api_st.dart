@@ -179,10 +179,29 @@ class DioApiST {
           log(response.data.toString(), name: 'API TEST $testModeType: Response Body');
         }
       }
-      if(responseType == ResponseType.data){
-        log(response.data.runtimeType.toString());
+      if(responseType == ResponseType.data) {
+        try {
+          if (response.data is String) {
+            Map<String, dynamic> result = {};
+            String responseBody;
+            if (_enableUtf8Decoding) {
+              responseBody = utf8.decode(response.data.runes.toList());
+            } else {
+              responseBody = response.data;
+            }
+            result  = jsonDecode(responseBody);
+            if (response.data[0] != '{') {
+              result ['key'] = json;
+            }
+            return result;
+          } else{
+            return response.data;
+          }
+        }
+        catch (e) {
+          return response.data;
+        }
       }
-      return response;
     }on d.DioError catch (error) {
      APIException err = APIException.fromDioError(error);
       // if ((testMode || _globalTestMode) && !_disableState) {
