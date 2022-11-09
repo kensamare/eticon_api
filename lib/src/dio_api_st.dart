@@ -63,7 +63,7 @@ class DioApiST {
   }
 
   ///Return baseUrl
-  List<String> get urls => urls;
+  List<String> get urls => _urls;
 
   ///Return storageUrl
   ///Link to the data store, which is needed to get various data
@@ -159,7 +159,7 @@ class DioApiST {
         if (isAuth) {
           log(Token.instance.token.toString(), name: 'API TEST $testModeType: Token');
         }
-        log(headers.toString(), name: 'API TEST $testModeType: Headers');
+        log(allHeaders.toString(), name: 'API TEST $testModeType: Headers');
       }
       d.ResponseType? responseTypeFinal;
       if (responseType != ResponseType.data) {
@@ -167,7 +167,9 @@ class DioApiST {
       }
       d.Response response = await dio.request(
         url,
-        options: d.Options(headers: allHeaders, responseType: responseTypeFinal),
+        queryParameters: type == 'GET' || type == 'DELETE' ? data : null,
+        data: !(type == 'GET' || type == 'DELETE') ? data : null,
+        options: d.Options(headers: allHeaders, responseType: responseTypeFinal, method: type),
         cancelToken: cancelToken,
       );
 
@@ -178,17 +180,17 @@ class DioApiST {
         }
       }
       if(responseType == ResponseType.data){
-        return response.data;
+        log(response.data.runtimeType.toString());
       }
       return response;
     }on d.DioError catch (error) {
      APIException err = APIException.fromDioError(error);
-      if ((testMode || _globalTestMode) && !_disableState) {
-        log(err.code.toString(), name: 'API TEST $testModeType: Response Code');
-        if (err.response?.data != null) {
-            log(err.response!.data.toString(), name: 'API TEST $testModeType: Response Body');
-          }
-        }
+      // if ((testMode || _globalTestMode) && !_disableState) {
+      //   log(err.code.toString(), name: 'API TEST $testModeType: Response Code');
+      //   if (err.response?.data != null) {
+      //       log(err.response!.data.toString(), name: 'API TEST $testModeType: Response Body');
+      //     }
+      //   }
       throw APIException.fromDioError(error);
     }
   }

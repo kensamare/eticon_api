@@ -42,11 +42,12 @@ class APIException extends DioError {
         ) {
     code = err.response?.statusCode ?? 0;
     body = err.error?.toString() ?? '';
+    stackTrace = null;
   }
 
   ///GetError
   @override
   String toString() {
-    return '\n[APIException] Error code: $code, Error body: ${body.toString()}';
+    return '\n[APIException] Error code: $code, Error: ${body.toString()}, Data: ${response?.data.toString()}';
   }
 }

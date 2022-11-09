@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:eticon_api/eticon_api.dart';
 import 'package:eticon_api/src/dio_api_st.dart';
 import 'package:eticon_api/src/token.dart';
@@ -11,25 +10,29 @@ import 'package:get_storage/get_storage.dart';
 //   }
 // }
 
-class NewApi {
+class Api {
   ///Initialization API class
   static Future<void> init(
-      {required List<String> baseUrl,
+      {required List<String> urls,
       bool globalTestMode = false,
       bool bearerToken = true,
       disableAllTestMode = false,
-      bool enableUtf8Decoding = false,
+      // bool enableUtf8Decoding = false,
       bool loadTokenFromMemory = true,
       String? authTitle,
       String? storageUrl}) async {
     if (!DioApiST.instance.setInitState()) {
       throw EticonApiError(error: 'API class already initialization');
     }
-    if (baseUrl.isEmpty) {
-      throw EticonApiError(error: 'URL is empty');
+    if (urls.isEmpty) {
+      throw EticonApiError(error: 'URLs list is empty');
     }
-    if (!baseUrl.startsWith('http')) throw EticonApiError(error: 'The url should start with https or http');
-    if (baseUrl[baseUrl.length - 1] != '/') baseUrl += '/';
+    if (!urls[0].startsWith('http')) throw EticonApiError(error: 'The url should start with https or http');
+    for (int i = 0; i < urls.length; i++) {
+      if (!urls[i].endsWith('/')) {
+        urls[i] += '/';
+      }
+    }
     await GetStorage.init();
 
     ///LoadTokenFromMemory now here
@@ -54,17 +57,17 @@ class NewApi {
     if (authTitle != null) {
       DioApiST.instance.setAuthTitle(authTitle);
     }
-    DioApiST.instance.setBaseUrl(baseUrl);
+    DioApiST.instance.setBaseUrl(urls);
     DioApiST.instance.setGlobalTestMode(globalTestMode);
     DioApiST.instance.disableAllTestMode(disableAllTestMode);
-    DioApiST.instance.enableUtf8Decoding(enableUtf8Decoding);
+    // DioApiST.instance.enableUtf8Decoding(enableUtf8Decoding);
     DioApiST.instance.setBearerMode(bearerToken);
     if (storageUrl != null) {
       DioApiST.instance.setStorageUrl(storageUrl);
     }
   }
 
-  static get baseUrl => DioApiST.instance.baseUrl;
+  static get urls => DioApiST.instance.urls;
 
   ///Help to get url to resource in server storage
   static String dataFromStorage(String path) {
@@ -146,9 +149,15 @@ class NewApi {
   static bool get isTokenExpire => DateTime.now().isAfter(Token.instance.expireDate);
 
   /// Sends an HTTP GET request.
-  static Future<Map<String, dynamic>> get(
-      {required String method, bool isAuth = false, bool testMode = false, Map<String, dynamic>? query}) async {
-    if (DioApiST.instance.baseUrl == null) {
+  static Future<dynamic> get(String path,
+      {bool isAuth = false,
+      bool testMode = false,
+      Map<String, dynamic>? query,
+      Map<String, String>? headers,
+      CancelToken? cancelToken,
+      ResponseType responseType = ResponseType.data,
+      int urlIndex = 0}) async {
+    if (DioApiST.instance.urls.isEmpty) {
       throw EticonApiError(error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
@@ -156,14 +165,30 @@ class NewApi {
         throw EticonApiError(error: 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await DioApiST.instance
-        .request(type: TYPE.GET, method: method, isAuth: isAuth, testMode: testMode, query: query);
+    bool isUrl = path.startsWith('http');
+    return await DioApiST.instance.request(
+        type: 'GET',
+        method: !isUrl ? path : null,
+        baseUrl: isUrl ? path : null,
+        isAuth: isAuth,
+        testMode: testMode,
+        headers: headers,
+        responseType: responseType ?? ResponseType.json,
+        cancelToken: cancelToken,
+        data: query,
+        urlIndex: urlIndex);
   }
 
   /// Sends an HTTP POST request.
-  static Future<Map<String, dynamic>> post(
-      {required String method, bool isAuth = false, bool testMode = false, required Map<String, dynamic> body}) async {
-    if (DioApiST.instance.baseUrl == null) {
+  static Future<dynamic> post(String path,
+      {bool isAuth = false,
+        bool testMode = false,
+        dynamic body,
+        Map<String, String>? headers,
+        CancelToken? cancelToken,
+        ResponseType responseType = ResponseType.data,
+        int urlIndex = 0}) async {
+    if (DioApiST.instance.urls.isEmpty) {
       throw EticonApiError(error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
@@ -171,14 +196,30 @@ class NewApi {
         throw EticonApiError(error: 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await DioApiST.instance
-        .request(type: TYPE.POST, method: method, isAuth: isAuth, testMode: testMode, query: body);
+    bool isUrl = path.startsWith('http');
+    return await DioApiST.instance.request(
+        type: 'POST',
+        method: !isUrl ? path : null,
+        baseUrl: isUrl ? path : null,
+        isAuth: isAuth,
+        testMode: testMode,
+        headers: headers,
+        responseType: responseType ?? ResponseType.json,
+        cancelToken: cancelToken,
+        data: body,
+        urlIndex: urlIndex);
   }
 
   /// Sends an HTTP PUT request.
-  static Future<Map<String, dynamic>> put(
-      {required String method, bool isAuth = false, bool testMode = false, required Map<String, dynamic> body}) async {
-    if (DioApiST.instance.baseUrl == null) {
+  static Future<dynamic> put(String path,
+      {bool isAuth = false,
+        bool testMode = false,
+        dynamic body,
+        Map<String, String>? headers,
+        CancelToken? cancelToken,
+        ResponseType responseType = ResponseType.data,
+        int urlIndex = 0}) async {
+    if (DioApiST.instance.urls.isEmpty) {
       throw EticonApiError(error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
@@ -186,29 +227,30 @@ class NewApi {
         throw EticonApiError(error: 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await DioApiST.instance
-        .request(type: TYPE.PUT, method: method, isAuth: isAuth, testMode: testMode, query: body);
+    bool isUrl = path.startsWith('http');
+    return await DioApiST.instance.request(
+        type: 'PUT',
+        method: !isUrl ? path : null,
+        baseUrl: isUrl ? path : null,
+        isAuth: isAuth,
+        testMode: testMode,
+        headers: headers,
+        responseType: responseType ?? ResponseType.json,
+        cancelToken: cancelToken,
+        data: body,
+        urlIndex: urlIndex);
   }
 
   /// Sends an HTTP DELETE request.
-  static Future<Map<String, dynamic>> delete(
-      {required String method, bool isAuth = false, bool testMode = false, Map<String, dynamic>? query}) async {
-    if (DioApiST.instance.baseUrl == null) {
-      throw EticonApiError(error: 'Base url not set, use Api.init(String url)');
-    }
-    if (isAuth) {
-      if (Token.instance.token.isEmpty) {
-        throw EticonApiError(error: 'Authentication token is empty, use Api.setToken (String url)');
-      }
-    }
-    return await DioApiST.instance
-        .request(type: TYPE.DEL, method: method, isAuth: isAuth, testMode: testMode, query: query);
-  }
-
-  /// Sends an HTTP PATCH request.
-  static Future<Map<String, dynamic>> patch(
-      {required String method, bool isAuth = false, bool testMode = false, required Map<String, dynamic> body}) async {
-    if (DioApiST.instance.baseUrl == null) {
+  static Future<dynamic> delete(String path,
+      {bool isAuth = false,
+        bool testMode = false,
+        Map<String, dynamic>? query,
+        Map<String, String>? headers,
+        CancelToken? cancelToken,
+        ResponseType responseType = ResponseType.data,
+        int urlIndex = 0}) async {
+    if (DioApiST.instance.urls.isEmpty) {
       throw EticonApiError(error: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
@@ -216,7 +258,48 @@ class NewApi {
         throw EticonApiError(error: 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
-    return await DioApiST.instance
-        .request(type: TYPE.PATCH, method: method, isAuth: isAuth, testMode: testMode, query: body);
+    bool isUrl = path.startsWith('http');
+    return await DioApiST.instance.request(
+        type: 'DELETE',
+        method: !isUrl ? path : null,
+        baseUrl: isUrl ? path : null,
+        isAuth: isAuth,
+        testMode: testMode,
+        headers: headers,
+        responseType: responseType ?? ResponseType.json,
+        cancelToken: cancelToken,
+        data: query,
+        urlIndex: urlIndex);
+  }
+
+  /// Sends an HTTP PATCH request.
+  static Future<dynamic> patch(String path,
+      {bool isAuth = false,
+        bool testMode = false,
+        dynamic body,
+        Map<String, String>? headers,
+        CancelToken? cancelToken,
+        ResponseType responseType = ResponseType.data,
+        int urlIndex = 0}) async {
+    if (DioApiST.instance.urls.isEmpty) {
+      throw EticonApiError(error: 'Base url not set, use Api.init()');
+    }
+    if (isAuth) {
+      if (Token.instance.token.isEmpty) {
+        throw EticonApiError(error: 'Authentication token is empty, use Api.setToken (String url)');
+      }
+    }
+    bool isUrl = path.startsWith('http');
+    return await DioApiST.instance.request(
+        type: 'PATCH',
+        method: !isUrl ? path : null,
+        baseUrl: isUrl ? path : null,
+        isAuth: isAuth,
+        testMode: testMode,
+        headers: headers,
+        responseType: responseType ?? ResponseType.json,
+        cancelToken: cancelToken,
+        data: body,
+        urlIndex: urlIndex);
   }
 }
