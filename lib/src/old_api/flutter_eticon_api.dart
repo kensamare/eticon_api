@@ -8,67 +8,67 @@ import 'api_st.dart';
 
 class OldApi {
   ///Initialization API class
-  static Future<void> init(
-      {required List<String> urls,
-        bool globalTestMode = false,
-        bool bearerToken = true,
-        disableAllTestMode = false,
-        bool enableUtf8Decoding = false,
-        bool loadTokenFromMemory = true,
-        String? authTitle,
-        String? storageUrl}) async {
-    if (!ApiST.instance.setInitState()) {
-      throw EticonApiError(error: 'API class already initialization');
-    }
-    if (urls.isEmpty) {
-      throw EticonApiError(error: 'URLs list is empty');
-    }
-    if (!urls[0].startsWith('http')) throw EticonApiError(error: 'The url should start with https or http');
-    for (int i = 0; i < urls.length; i++) {
-      if (!urls[i].endsWith('/')){
-        urls[i] += '/';
-      }
-    }
-    await GetStorage.init();
-
-    ///LoadTokenFromMemory now here
-    if (loadTokenFromMemory) {
-      String token = GetStorage().read('ApiEticonMainAuthToken2312') ?? '';
-      if (token.isNotEmpty) {
-        Token.instance.setToken(token);
-      }
-      token = GetStorage().read('ApiEticonMainRefreshToken2312') ?? '';
-      if (token.isNotEmpty) {
-        Token.instance.setRefreshToken(token);
-      }
-      String expireTimeString = GetStorage().read('ApiEticonMainExpireDate2312') ?? '';
-      if (expireTimeString.isNotEmpty) {
-        DateTime expireTime = DateTime.parse(GetStorage().read('ApiEticonMainExpireDate2312'));
-        Token.instance.expireDate = expireTime;
-      }
-    } else {
-      Token.instance.setToken('');
-      Token.instance.setRefreshToken('');
-    }
-    if (authTitle != null) {
-      ApiST.instance.setAuthTitle(authTitle);
-    }
-    ApiST.instance.setUrls(urls);
-    ApiST.instance.setGlobalTestMode(globalTestMode);
-    ApiST.instance.disableAllTestMode(disableAllTestMode);
-    ApiST.instance.enableUtf8Decoding(enableUtf8Decoding);
-    ApiST.instance.setBearerMode(bearerToken);
-    if (storageUrl != null) {
-      ApiST.instance.setStorageUrl(storageUrl);
-    }
-  }
+  // static Future<void> init(
+  //     {required List<String> urls,
+  //       bool globalTestMode = false,
+  //       bool bearerToken = true,
+  //       disableAllTestMode = false,
+  //       bool enableUtf8Decoding = false,
+  //       bool loadTokenFromMemory = true,
+  //       String? authTitle,
+  //       String? storageUrl}) async {
+  //   if (!ApiST.instance.setInitState()) {
+  //     throw APIException(error: 'API class already initialization');
+  //   }
+  //   if (urls.isEmpty) {
+  //     throw APIException(error: 'URLs list is empty');
+  //   }
+  //   if (!urls[0].startsWith('http')) throw APIException(error: 'The url should start with https or http');
+  //   for (int i = 0; i < urls.length; i++) {
+  //     if (!urls[i].endsWith('/')){
+  //       urls[i] += '/';
+  //     }
+  //   }
+  //   await GetStorage.init();
+  //
+  //   ///LoadTokenFromMemory now here
+  //   if (loadTokenFromMemory) {
+  //     String token = GetStorage().read('ApiEticonMainAuthToken2312') ?? '';
+  //     if (token.isNotEmpty) {
+  //       Token.instance.setToken(token);
+  //     }
+  //     token = GetStorage().read('ApiEticonMainRefreshToken2312') ?? '';
+  //     if (token.isNotEmpty) {
+  //       Token.instance.setRefreshToken(token);
+  //     }
+  //     String expireTimeString = GetStorage().read('ApiEticonMainExpireDate2312') ?? '';
+  //     if (expireTimeString.isNotEmpty) {
+  //       DateTime expireTime = DateTime.parse(GetStorage().read('ApiEticonMainExpireDate2312'));
+  //       Token.instance.expireDate = expireTime;
+  //     }
+  //   } else {
+  //     Token.instance.setToken('');
+  //     Token.instance.setRefreshToken('');
+  //   }
+  //   if (authTitle != null) {
+  //     ApiST.instance.setAuthTitle(authTitle);
+  //   }
+  //   ApiST.instance.setUrls(urls);
+  //   ApiST.instance.setGlobalTestMode(globalTestMode);
+  //   ApiST.instance.disableAllTestMode(disableAllTestMode);
+  //   ApiST.instance.enableUtf8Decoding(enableUtf8Decoding);
+  //   ApiST.instance.setBearerMode(bearerToken);
+  //   if (storageUrl != null) {
+  //     ApiST.instance.setStorageUrl(storageUrl);
+  //   }
+  // }
 
   // static get baseUrl => ApiST.instance.baseUrl;
 
   ///Help to get url to resource in server storage
   static String dataFromStorage(String path) {
     if (ApiST.instance.storageUrl == null) {
-      throw EticonApiError(error: 'Storage url is null, set storageUrl in Api.init()');
+      throw APIException(-1, body: 'Storage url is null, set storageUrl in Api.init()');
     } else {
       return '${ApiST.instance.storageUrl}$path';
     }
@@ -98,7 +98,7 @@ class OldApi {
   ///Set Authorization token
   static void setToken(String token) {
     if (!ApiST.instance.initState) {
-      throw EticonApiError(error: 'Need Api.init() before setToken');
+      throw APIException(-1, body: 'Need Api.init() before setToken');
     }
     GetStorage().write('ApiEticonMainAuthToken2312', token);
     Token.instance.setToken(token);
@@ -126,7 +126,7 @@ class OldApi {
   ///Set refresh token
   static void setRefreshToken(String token) {
     if (!ApiST.instance.initState) {
-      throw EticonApiError(error: 'Need Api.init() before setRefreshToken');
+      throw APIException(-1, body: 'Need Api.init() before setRefreshToken');
     }
     GetStorage().write('ApiEticonMainRefreshToken2312', token);
     Token.instance.setRefreshToken(token);
@@ -135,7 +135,7 @@ class OldApi {
   ///Set refresh token expire in seconds. Fro check you can use Api.isRefreshTokenExpire
   static void setExpire({required int seconds}) {
     if (!ApiST.instance.initState) {
-      throw EticonApiError(error: 'Need Api.init() before setRefreshToken');
+      throw APIException(-1, body: 'Need Api.init() before setRefreshToken');
     }
     Token.instance.setExpire(seconds);
     GetStorage().write('ApiEticonMainExpireDate2312', Token.instance.expireDate.toString());
@@ -152,11 +152,11 @@ class OldApi {
         Map<String, dynamic>? query,
         int urlIndex = 0}) async {
     if (ApiST.instance.urls.isEmpty) {
-      throw EticonApiError(error: 'Base url not set, use Api.init()');
+      throw APIException(-1, body: 'Base url not set, use Api.init()');
     }
     if (isAuth) {
       if (Token.instance.token.isEmpty) {
-        throw EticonApiError(error: 'Authentication token is empty, use Api.setToken (String url)');
+        throw APIException(-1, body: 'Authentication token is empty, use Api.setToken (String url)');
       }
     }
     return await ApiST.instance
@@ -172,7 +172,7 @@ class OldApi {
         int urlIndex = 0}) async {
     String error = _checkBeforeRequest(isAuth, urlIndex);
     if (error.isNotEmpty) {
-      throw EticonApiError(error: error);
+      throw APIException(-1, body: error);
     }
     return await ApiST.instance
         .request(type: TYPE.POST, method: method, isAuth: isAuth, testMode: testMode, query: body, urlIndex: urlIndex);
@@ -187,7 +187,7 @@ class OldApi {
         int urlIndex = 0}) async {
     String error = _checkBeforeRequest(isAuth, urlIndex);
     if (error.isNotEmpty) {
-      throw EticonApiError(error: error);
+      throw APIException(-1, body: error);
     }
     return await ApiST.instance
         .request(type: TYPE.PUT, method: method, isAuth: isAuth, testMode: testMode, query: body, urlIndex: urlIndex);
@@ -202,7 +202,7 @@ class OldApi {
         int urlIndex = 0}) async {
     String error = _checkBeforeRequest(isAuth, urlIndex);
     if (error.isNotEmpty) {
-      throw EticonApiError(error: error);
+      throw APIException(-1, body: error);
     }
     return await ApiST.instance
         .request(type: TYPE.DEL, method: method, isAuth: isAuth, testMode: testMode, query: query, urlIndex: urlIndex);
@@ -217,7 +217,7 @@ class OldApi {
         int urlIndex = 0}) async {
     String error = _checkBeforeRequest(isAuth, urlIndex);
     if (error.isNotEmpty) {
-      throw EticonApiError(error: error);
+      throw APIException(-1, body: error);
     }
     return await ApiST.instance
         .request(type: TYPE.PATCH, method: method, isAuth: isAuth, testMode: testMode, query: body, urlIndex: urlIndex);

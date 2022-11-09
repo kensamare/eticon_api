@@ -12,13 +12,13 @@ class DartApi {
   //       bool enableUtf8Decoding = false,
   //       String? storageUrl}) async {
   //   if (!ApiST.instance.setInitState()) {
-  //     throw EticonApiError(error: 'API class already initialization');
+  //     throw APIException(error: 'API class already initialization');
   //   }
   //   if (baseUrl.isEmpty) {
-  //     throw EticonApiError(error: 'URL is empty');
+  //     throw APIException(error: 'URL is empty');
   //   }
   //   if (!baseUrl.startsWith('http'))
-  //     throw EticonApiError(error: 'The url should start with https or http');
+  //     throw APIException(error: 'The url should start with https or http');
   //   if (baseUrl[baseUrl.length - 1] != '/') baseUrl += '/';
   //   ApiST.instance.setBaseUrl(baseUrl);
   //   ApiST.instance.setGlobalTestMode(globalTestMode);
@@ -32,7 +32,7 @@ class DartApi {
   // ///Help to get url to resource in server storage
   // static String dataFromStorage(String path) {
   //   if (ApiST.instance.storageUrl == null) {
-  //     throw EticonApiError(
+  //     throw APIException(
   //         error: 'Storage url is null, set storageUrl in Api.init()');
   //   } else {
   //     return '${ApiST.instance.storageUrl}$path';
@@ -51,11 +51,11 @@ class DartApi {
   //       bool testMode = false,
   //       Map<String, dynamic>? query}) async {
   //   if (ApiST.instance.baseUrl == null) {
-  //     throw EticonApiError(error: 'Base url not set, use Api.init()');
+  //     throw APIException(error: 'Base url not set, use Api.init()');
   //   }
   //   if (isAuth) {
   //     if (Token.instance.token.isEmpty) {
-  //       throw EticonApiError(
+  //       throw APIException(
   //           error:
   //           'Authentication token is empty, use Api.setToken (String url)');
   //     }
@@ -75,11 +75,11 @@ class DartApi {
   //       bool testMode = false,
   //       required Map<String, dynamic> body}) async {
   //   if (ApiST.instance.baseUrl == null) {
-  //     throw EticonApiError(error: 'Base url not set, use Api.init()');
+  //     throw APIException(error: 'Base url not set, use Api.init()');
   //   }
   //   if (isAuth) {
   //     if (Token.instance.token.isEmpty) {
-  //       throw EticonApiError(
+  //       throw APIException(
   //           error:
   //           'Authentication token is empty, use Api.setToken (String url)');
   //     }
@@ -99,11 +99,11 @@ class DartApi {
   //       bool testMode = false,
   //       required Map<String, dynamic> body}) async {
   //   if (ApiST.instance.baseUrl == null) {
-  //     throw EticonApiError(error: 'Base url not set, use Api.init()');
+  //     throw APIException(error: 'Base url not set, use Api.init()');
   //   }
   //   if (isAuth) {
   //     if (Token.instance.token.isEmpty) {
-  //       throw EticonApiError(
+  //       throw APIException(
   //           error:
   //           'Authentication token is empty, use Api.setToken (String url)');
   //     }
@@ -123,11 +123,11 @@ class DartApi {
   //       bool testMode = false,
   //       Map<String, dynamic>? query}) async {
   //   if (ApiST.instance.baseUrl == null) {
-  //     throw EticonApiError(error: 'Base url not set, use Api.init(String url)');
+  //     throw APIException(error: 'Base url not set, use Api.init(String url)');
   //   }
   //   if (isAuth) {
   //     if (Token.instance.token.isEmpty) {
-  //       throw EticonApiError(
+  //       throw APIException(
   //           error:
   //           'Authentication token is empty, use Api.setToken (String url)');
   //     }
