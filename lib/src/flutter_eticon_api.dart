@@ -101,17 +101,13 @@ class Api {
   static String? get token => Token.instance.token;
 
   ///Checks token storage for emptiness
-  static bool tokenIsNotEmpty() {
-    return Token.instance.token.isNotEmpty;
-  }
+  static bool get tokenIsNotEmpty => Token.instance.token.isNotEmpty;
 
   ///Checks token storage for emptiness
-  static bool tokenIsEmpty() {
-    return Token.instance.token.isEmpty;
-  }
+  static bool get tokenIsEmpty => Token.instance.token.isEmpty;
 
   ///Clear Token
-  static void clearToken() => Token.instance.setToken('');
+  static void get clearToken => Token.instance.setToken('');
 
   ///Set Authorization token
   static void setToken(String token) {
@@ -129,17 +125,13 @@ class Api {
   static DateTime? get expireDate => Token.instance.expireDate.year == 1970 ? null : Token.instance.expireDate;
 
   ///Clear Token
-  static void clearRefreshToken() => Token.instance.setRefreshToken('');
+  static void get clearRefreshToken => Token.instance.setRefreshToken('');
 
   ///Checks token storage for emptiness
-  static bool refreshTokenIsNotEmpty() {
-    return Token.instance.token.isNotEmpty;
-  }
+  static bool get refreshTokenIsNotEmpty => Token.instance.token.isNotEmpty;
 
   ///Checks token storage for emptiness
-  static bool refreshTokenIsEmpty() {
-    return Token.instance.token.isEmpty;
-  }
+  static bool get refreshTokenIsEmpty => Token.instance.token.isEmpty;
 
   ///Set refresh token
   static void setRefreshToken(String token) {
