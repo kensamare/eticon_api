@@ -15,6 +15,8 @@ class Api {
       // bool enableUtf8Decoding = false,
       bool loadTokenFromMemory = true,
       String? authTitle,
+      bool usePrintInLogs = false,
+      Function(APIException error)? onAllError,
       String? storageUrl}) async {
     if (!DioApiST.instance.setInitState()) {
       throw APIException(-1, body: 'API class already initialization');
@@ -54,6 +56,8 @@ class Api {
     if (authTitle != null) {
       DioApiST.instance.setAuthTitle(authTitle);
     }
+    DioApiST.instance.usePrint = usePrintInLogs;
+    DioApiST.instance.onAllError = onAllError;
     DioApiST.instance.setBaseUrl(urls);
     DioApiST.instance.setGlobalTestMode(globalTestMode);
     DioApiST.instance.disableAllTestMode(disableAllTestMode);
@@ -166,6 +170,8 @@ class Api {
       Map<String, String>? headers,
       CancelToken? cancelToken,
       ResponseType responseType = ResponseType.map_data,
+      Function(int, int)? onReceiveProgress,
+      bool ignoreOnAllError = false,
       int urlIndex = 0}) async {
     String error = _checkBeforeRequest(isAuth, urlIndex);
     if (error.isNotEmpty) {
@@ -182,6 +188,8 @@ class Api {
         responseType: responseType,
         cancelToken: cancelToken,
         data: query,
+        onReceiveProgress: onReceiveProgress,
+        ignoreOnAllError: ignoreOnAllError,
         urlIndex: urlIndex);
   }
 
@@ -193,6 +201,9 @@ class Api {
       Map<String, String>? headers,
       CancelToken? cancelToken,
       ResponseType responseType = ResponseType.map_data,
+      Function(int, int)? onSendProgress,
+      Function(int, int)? onReceiveProgress,
+      bool ignoreOnAllError = false,
       int urlIndex = 0}) async {
     String error = _checkBeforeRequest(isAuth, urlIndex);
     if (error.isNotEmpty) {
@@ -209,6 +220,9 @@ class Api {
         responseType: responseType,
         cancelToken: cancelToken,
         data: body,
+        onReceiveProgress: onReceiveProgress,
+        onSendProgress: onSendProgress,
+        ignoreOnAllError: ignoreOnAllError,
         urlIndex: urlIndex);
   }
 
@@ -220,6 +234,9 @@ class Api {
       Map<String, String>? headers,
       CancelToken? cancelToken,
       ResponseType responseType = ResponseType.map_data,
+      Function(int, int)? onSendProgress,
+      Function(int, int)? onReceiveProgress,
+      bool ignoreOnAllError = false,
       int urlIndex = 0}) async {
     String error = _checkBeforeRequest(isAuth, urlIndex);
     if (error.isNotEmpty) {
@@ -236,6 +253,9 @@ class Api {
         responseType: responseType ?? ResponseType.map_data,
         cancelToken: cancelToken,
         data: body,
+        onReceiveProgress: onReceiveProgress,
+        onSendProgress: onSendProgress,
+        ignoreOnAllError: ignoreOnAllError,
         urlIndex: urlIndex);
   }
 
@@ -247,6 +267,7 @@ class Api {
       Map<String, String>? headers,
       CancelToken? cancelToken,
       ResponseType responseType = ResponseType.map_data,
+      bool ignoreOnAllError = false,
       int urlIndex = 0}) async {
     String error = _checkBeforeRequest(isAuth, urlIndex);
     if (error.isNotEmpty) {
@@ -263,6 +284,7 @@ class Api {
         responseType: responseType,
         cancelToken: cancelToken,
         data: query,
+        ignoreOnAllError: ignoreOnAllError,
         urlIndex: urlIndex);
   }
 
@@ -274,6 +296,9 @@ class Api {
       Map<String, String>? headers,
       CancelToken? cancelToken,
       ResponseType responseType = ResponseType.map_data,
+      Function(int, int)? onSendProgress,
+      Function(int, int)? onReceiveProgress,
+      bool ignoreOnAllError = false,
       int urlIndex = 0}) async {
     String error = _checkBeforeRequest(isAuth, urlIndex);
     if (error.isNotEmpty) {
@@ -290,6 +315,9 @@ class Api {
         responseType: responseType,
         cancelToken: cancelToken,
         data: body,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+        ignoreOnAllError: ignoreOnAllError,
         urlIndex: urlIndex);
   }
 

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' as d;
 import 'package:eticon_api/src/api_errors.dart';
 import 'package:eticon_api/src/flutter_eticon_api.dart';
+import 'package:eticon_api/src/logger.dart';
 import 'package:eticon_api/src/token.dart';
 import 'package:eticon_api/src/old_api/type.dart';
 import 'dart:convert';
@@ -21,8 +22,13 @@ class DioApiST {
 
   static String _authTitle = 'Authorization';
 
+  static Function(APIException error)? _onAllError;
+
   ///Base url int singletons
   static List<String> _urls = [];
+
+  ///User print in logs
+  static bool _usePrint = false;
 
   ///Storage url int singletons
   static String? _storageUrl;
@@ -52,6 +58,10 @@ class DioApiST {
   }
 
   bool get initState => _init;
+
+  set usePrint(bool t) => _usePrint = t;
+
+  set onAllError(Function(APIException)? t) => _onAllError = t;
 
   ///Set Bearer token mode
   void setBearerMode(bool mode) {
@@ -129,6 +139,9 @@ class DioApiST {
     ResponseType responseType = ResponseType.map_data,
     d.CancelToken? cancelToken,
     dynamic data,
+    Function(int, int)? onSendProgress,
+    Function(int, int)? onReceiveProgress,
+    bool ignoreOnAllError = false,
   }) async {
     String testModeType = type.toString().replaceAll('TYPE.', '');
 
@@ -142,15 +155,16 @@ class DioApiST {
           } else
             _queryList.add('$key=${Uri.encodeComponent(value.toString())}');
         });
-        log(_queryList.toString(), name: 'API TEST $testModeType: Query List');
+        Logger.log(_queryList.toString(), name: 'API TEST $testModeType: Query List', printMode: _usePrint);
       }
     } else if ((testMode || _globalTestMode) && !_disableState && data is Map) {
-      log(jsonEncode(data).toString(), name: 'API TEST $testModeType: Body in JSON');
+      Logger.log(jsonEncode(data).toString(), name: 'API TEST $testModeType: Body in JSON', printMode: _usePrint);
     }
     //Формирование ссылки запроса
     String url = '${baseUrl == null ? '${_urls[urlIndex]}$method' : baseUrl}' +
         '${(type == 'GET' || type == 'DELETE') && _queryList.isNotEmpty ? '?${_queryList.join("&")}' : ''}';
-    if ((testMode || _globalTestMode) && !_disableState) log(url.toString(), name: 'API TEST $testModeType: URL');
+    if ((testMode || _globalTestMode) && !_disableState)
+      Logger.log(url.toString(), name: 'API TEST $testModeType: URL', printMode: _usePrint);
     // Делаем запрос
     try {
       Map<String, String> allHeaders;
@@ -158,9 +172,9 @@ class DioApiST {
       allHeaders.addAll(headers ?? {});
       if ((testMode || _globalTestMode) && !_disableState) {
         if (isAuth) {
-          log(Token.instance.token.toString(), name: 'API TEST $testModeType: Token');
+          Logger.log(Token.instance.token.toString(), name: 'API TEST $testModeType: Token', printMode: _usePrint);
         }
-        log(allHeaders.toString(), name: 'API TEST $testModeType: Headers');
+        Logger.log(allHeaders.toString(), name: 'API TEST $testModeType: Headers', printMode: _usePrint);
       }
       d.ResponseType? responseTypeFinal;
       if (responseType != ResponseType.map_data) {
@@ -171,13 +185,15 @@ class DioApiST {
         queryParameters: type == 'GET' || type == 'DELETE' ? data : null,
         data: !(type == 'GET' || type == 'DELETE') ? data : null,
         options: d.Options(headers: allHeaders, responseType: responseTypeFinal, method: type),
+        onReceiveProgress: onReceiveProgress,
+        onSendProgress: onSendProgress,
         cancelToken: cancelToken,
       );
 
       if ((testMode || _globalTestMode) && !_disableState) {
-        log(response.statusCode.toString(), name: 'API TEST $testModeType: Response Code');
+        Logger.log(response.statusCode.toString(), name: 'API TEST $testModeType: Response Code', printMode: _usePrint);
         if (response.data != null) {
-          log(response.data.toString(), name: 'API TEST $testModeType: Response Body');
+          Logger.log(response.data.toString(), name: 'API TEST $testModeType: Response Body', printMode: _usePrint);
         }
       }
       if (responseType == ResponseType.map_data) {
@@ -206,11 +222,16 @@ class DioApiST {
     } on d.DioError catch (error) {
       if ((testMode || _globalTestMode) && !_disableState) {
         if (error.response != null) {
-          log(error.response!.statusCode.toString(), name: 'API TEST $testModeType: Response Code');
+          Logger.log(error.response!.statusCode.toString(),
+              name: 'API TEST $testModeType: Response Code', printMode: _usePrint);
           if (error.response!.data != null) {
-            log(error.response!.data.toString(), name: 'API TEST $testModeType: Response Body');
+            Logger.log(error.response!.data.toString(),
+                name: 'API TEST $testModeType: Response Body', printMode: _usePrint);
           }
         }
+      }
+      if (_onAllError != null && !ignoreOnAllError) {
+        _onAllError!(APIException.fromDio(error));
       }
       throw APIException.fromDio(error);
     }

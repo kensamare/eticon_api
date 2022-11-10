@@ -10,7 +10,7 @@ class APIException implements Exception {
 
   DioError? error;
 
-  APIException.fromDio(this.error){
+  APIException.fromDio(this.error) {
     code = error!.response?.statusCode ?? 0;
     body = error!.error?.toString() ?? '';
   }
