@@ -12,7 +12,7 @@ class Api {
       bool globalTestMode = false,
       bool bearerToken = true,
       disableAllTestMode = false,
-      // bool enableUtf8Decoding = false,
+      bool enableUtf8Decoding = false,
       bool loadTokenFromMemory = true,
       String? authTitle,
       bool usePrintInLogs = false,
@@ -61,7 +61,7 @@ class Api {
     DioApiST.instance.setBaseUrl(urls);
     DioApiST.instance.setGlobalTestMode(globalTestMode);
     DioApiST.instance.disableAllTestMode(disableAllTestMode);
-    // DioApiST.instance.enableUtf8Decoding(enableUtf8Decoding);
+    DioApiST.instance.enableUtf8Decoding(enableUtf8Decoding);
     DioApiST.instance.setBearerMode(bearerToken);
     if (storageUrl != null) {
       DioApiST.instance.setStorageUrl(storageUrl);
