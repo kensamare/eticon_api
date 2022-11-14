@@ -6,13 +6,49 @@
 
 Библиотека для работы с http-запросами.
 
+## Обратите внимание на важные изменения с версии 2.0.0!
+Изменена бибилотека для работы с сетью. Вместо http теперь используется Dio.
+
+Если же вы хотите использовать новую версию в старых проектах, либо обновляйте все запросы, либо замените Api при использовании запросов на OldApi.
+OldApi необходимо применить исключительно для самих запросов (get, post, patch, put).
+
+Однако некоторых изменений избежать не получится, например отказ от baseUrl в инициализации и замены его на список url. Сделано это для возможности взаимодействия с разными сервисами, при этом не меня url.
+
+Из запросов убран именнованный параметр method. Теперь можно передать как метод так и полный url, соотвественно были удалены rawGet, rawPost, rawPut, rawPatсh.
+
+Также стоит обратить внимание на тип возвращаемый тип данных, теперь запрос может вернуть либо Map<String, dynamic>, либо класс Response.
+
+
+## Содержание
+- [Инициализация](#инициализация)
+- [Методы](#методы)
+- [Тип ответа](#тип-ответа)
+- [Заголовки](#заголовки)
+- [Авторизация](#авторизация)
+- [Рефреш токен](#рефреш-токен)
+- [Отправка MultiPart-Formdata](#отправка-multipart-formdata)
+- [Test Mode](#test-mode)
+- [Ссылка на хранилище данных сервера](#ссылка-на-хранилище-данных-сервера)
+
 ## Инициализация
 
 Для начала необходимо провести инициализацию:
 
 ```dart
 void main() async {
-  await Api.init(baseUrl: 'https://example.com/');
+  await Api.init(urls: ['https://example.com/']);
+  runApp(MyApp());
+}
+```
+
+Для однотипного поведения на один и тот же код ошибки можно использовать onAllError. Например при получения кода 401 отправлять пользователя на экран авторизации.
+
+```dart
+void main() async {
+  await Api.init(urls: ['https://example.com/'],
+  onAllError: (err) {
+        if (err.code == 401) Get.offAll(() => AuthScreenProvider());}
+  );
   runApp(MyApp());
 }
 ```
@@ -33,7 +69,7 @@ void main() async {
 ```dart
 Future<void> getRequest() async {
     try{
-      Map<String, dynamic> response = await Api.get(method: 'product', query: {"id": 5});
+      Map<String, dynamic> response = await Api.get('product', query: {"id": 5});
     } on APIException catch(error){
       print('ERROR CODE: ${error.code}');
     }
@@ -45,7 +81,7 @@ Future<void> getRequest() async {
 ```dart
 Future<void> postRequest() async {
     try{
-      Map<String, dynamic> response = await Api.post(method: 'product', body: {"id": 5});
+      Map<String, dynamic> response = await Api.post('product', body: {"id": 5});
     } on APIException catch(error){
       print('ERROR CODE: ${error.code}');
     }
@@ -69,7 +105,7 @@ Future<void> deleteRequest() async {
 ```dart
 Future<void> putRequest() async {
     try{
-      Map<String, dynamic> response = await Api.put(method: 'product', body: {"id": 5}, isAuth: true);
+      Map<String, dynamic> response = await Api.put('product', body: {"id": 5}, isAuth: true);
     } on APIException catch(error){
       print('ERROR CODE: ${error.code}');
     }
@@ -80,76 +116,44 @@ Future<void> putRequest() async {
 ```dart
 Future<void> patchRequest() async {
     try{
-      Map<String, dynamic> response = await Api.patch(method: 'product', body: {"id": 5}, isAuth: true);
+      Map<String, dynamic> response = await Api.patch('product', body: {"id": 5}, isAuth: true);
     } on APIException catch(error){
       print('ERROR CODE: ${error.code}');
     }
   }
 ```
 
-## "Cырые" методы
+О [CancelToken](https://pub.dev/packages/dio#cancellation), onSendProgress и onReciveProgress можно прочитать на странице [Dio](https://pub.dev/packages/dio#cancellation)
 
-Все сырые методы принимают url, по которому делается запрос. В случае GET и DELETE без параметров.
-Они указываются отдельно как и в методах описанных выше.
+## Тип ответа
 
-```dart
-Future<void> request() async {
-    try{
-      Map<String, dynamic> response = await Api.rawGet(url: 'https://example.com/profile', query: {"id": 5}, headers: {"Content-type": 'application/json'});
-    } on APIException catch(error){
-      print('ERROR CODE: ${error.code}');
-    }
-  }
-```
+Для всех запросов можно установить тип ответа(ResponseType) в отличии от Dio добавлен еще один тип, который не возвращает полноценный класс, а возвращает только Map<String, dynamic>, для этого необходимо использовать ResponseType.map_data(значение по умолчанию во всех запросах). В остальных же случаях вернется класс Response аналогичны Dio.
 
 ```dart
-Future<void> request() async {
-    try{
-      Map<String, dynamic> response = await Api.rawPost(url: 'https://example.com/profile', body: {"id": 5}, headers: {"Content-type": 'application/json'});
-    } on APIException catch(error){
-      print('ERROR CODE: ${error.code}');
-    }
-  }
-```
-
-```dart
-Future<void> request() async {
-  try{
-    Map<String, dynamic> response = await Api.rawDelete(url: 'https://example.com/profile', query: {"id": 5}, headers: {"Content-type": 'application/json'});
-  } on APIException catch(error){
-    print('ERROR CODE: ${error.code}');
-  }
+{
+  /// Response body. may have been transformed, please refer to [ResponseType].
+  T? data;
+  /// Response headers.
+  Headers headers;
+  /// The corresponding request info.
+  Options request;
+  /// Http status code.
+  int? statusCode;
+  String? statusMessage;
+  /// Whether redirect 
+  bool? isRedirect;  
+  /// redirect info    
+  List<RedirectInfo> redirects ;
+  /// Returns the final real request uri (maybe redirect). 
+  Uri realUri;    
+  /// Custom field that you can retrieve it later in `then`.
+  Map<String, dynamic> extra;
 }
 ```
-
-```dart
-Future<void> request() async {
-  try{
-    Map<String, dynamic> response = await Api.rawPut(url: 'https://example.com/profile', body: {"id": 5}, headers: {"Content-type": 'application/json'});
-  } on APIException catch(error){
-    print('ERROR CODE: ${error.code}');
-  }
-}
-```
-
-```dart
-Future<void> request() async {
-  try{
-    Map<String, dynamic> response = await Api.rawPatch(url: 'https://example.com/profile', body: {"id": 5}, headers: {"Content-type": 'application/json'});
-  } on APIException catch(error){
-    print('ERROR CODE: ${error.code}');
-  }
-}
-```
-
-## Коды состояний HTTP
-
-Если результат кода состояния в ответе будет не равен 200, тогда сработает **APIException**. Он содержит в себе код состояния, а также тело ответа.
-В случае, если же будут проблемы с Интеренет соединенем, **APIException** вернет код 0.
 
 ## Заголовки
 
-Для объявления заголовков необходимо использовать метод:
+Для объявления глобальных заголовков необходимо использовать метод:
 
 ```dart
   Api.setHeaders({"Content-type": 'application/json'});
@@ -158,6 +162,8 @@ Future<void> request() async {
 > Если заголовки не установлены, то по умолчанию используется заголовок ***Content-type*** : ***application/json***
 
 Обратите внимание!!! что заголовок ***Authorization** добавляется автоматически при авторизированном запросе.
+
+Заголовки также можно задавать и для отдельного запроса использую параметр headers, если ключ заголовка был объявлен глобально, то он перезапишется из заданного параметра. 
 
 ## Авторизация
 
@@ -176,7 +182,7 @@ Future<void> request() async {
 
 Очистить токен:
 ```dart
-  Api.clearToken();
+  Api.clearToken;
 ```
 
 Также можно проверить токен на пустоту или не пустоту:
@@ -186,7 +192,6 @@ Future<void> request() async {
   Api.tokenIsNotEmpty;//return true or false
 ```
 
-```
 Если вы не используете в токене тип ***Bearer***, то отключите его:
 
 ```dart
@@ -210,7 +215,7 @@ void main() async {
 
 Очистить токен:
 ```dart
-  Api.clearRefreshToken();
+  Api.clearRefreshToken;
 ```
 
 Также можно проверить токен на пустоту или не пустоту:
@@ -233,6 +238,46 @@ void main() async {
 Получить дату истекания токена авторизации:
 ```dart
   Api.expireDate;
+```
+
+## Отправка MultiPart-Formdata
+
+Вы также можете отправить FormData, который будет отправлять данные в `multipart/form-data` и поддерживает загрузку файлов.
+
+```dart
+var formData = FormData.fromMap({
+  'name': 'wendux',
+  'age': 25,
+  'file': await MultipartFile.fromFile('./text.txt',filename: 'upload.txt')
+});
+response = await Api.post('/info', data: formData);
+```
+
+### Загрузка нескольких файлов
+
+Есть два способа добавить несколько файлов в `FormData`, единственная разница в том, что ключи загрузки различны для типов массивов。
+
+```dart
+FormData.fromMap({
+  'files': [
+    MultipartFile.fromFileSync('./example/upload.txt', filename: 'upload.txt'),
+    MultipartFile.fromFileSync('./example/upload.txt', filename: 'upload.txt'),
+  ]
+});
+```
+
+Ключ загрузки в конечном итоге становится «files[]». Это связано с тем, что многие серверные службы добавляют к ключу среднюю скобку, когда получают массив файлов. **Если вам не нужен «[]»**, вам следует создать FormData следующим образом (не используйте `FormData.fromMap`):
+
+```dart
+var formData = FormData();
+formData.files.addAll([
+  MapEntry('files',
+    MultipartFile.fromFileSync('./example/upload.txt',filename: 'upload.txt'),
+  ),
+  MapEntry('files',
+    MultipartFile.fromFileSync('./example/upload.txt',filename: 'upload.txt'),
+  ),
+]);
 ```
 
 ## Test Mode
