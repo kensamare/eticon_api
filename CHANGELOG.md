@@ -1,3 +1,9 @@
+## 2.0.0
+* Change main package to dio, if you want to use http and version 1.3.12(last before migration) of this package use OldApi
+* Remove "raw" requests, now you can use default request
+* Change Api.init to support several base urls. To switch between them, simply specify the index of the desired address in the request
+* Enable to send FormData
+
 ## 1.3.12
 * Update README
 

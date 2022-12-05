@@ -1,33 +1,25 @@
-///Main Api error class
-class EticonApiError implements Exception {
-  ///Error String
-  String error;
-
-  EticonApiError({required this.error});
-
-  @override
-  String toString() {
-    var message = this.error;
-    return "\n[EticonApiError]: $message";
-  }
-
-  ///Get error
-  String? get message => this.error;
-}
+import 'package:dio/dio.dart';
 
 ///ApiException class show http error
 class APIException implements Exception {
   ///Error code
-  int code;
+  late int code;
 
   ///Error body
   dynamic body;
+
+  DioError? error;
+
+  APIException.fromDio(this.error) {
+    code = error!.response?.statusCode ?? 0;
+    body = error!.error?.toString() ?? '';
+  }
 
   APIException(this.code, {this.body});
 
   ///GetError
   @override
   String toString() {
-    return '\n[APIException] Error code: $code, Error body: ${body.toString()}';
+    return '\n[APIException] Error code: $code, Error: ${body.toString()}, ${error != null ? 'Data: ${error!.response?.data.toString()}' : ''}';
   }
 }

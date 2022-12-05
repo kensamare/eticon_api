@@ -41,5 +41,4 @@ class Token {
   void setExpire(int seconds) {
     _expire = DateTime.now().add(Duration(seconds: seconds));
   }
-
 }
