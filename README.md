@@ -25,10 +25,10 @@ It is also worth paying attention to the type of the returned data type, now the
 - [Response type](#response-type)
 - [Headers](#headers)
 - [Authorization](#authorization)
-- [Refresh token](#refresh token)
-- [Sending MultiPart-Formdata](#sending-multipart-formdata)
+- [Refresh token](#refresh-token)
+- [Sending MultiPart-Formdata](#send-multipart-formdata)
 - [Test Mode](#test-mode)
-- [Link to server data store](#link to server data store)
+- [Link to server datastore](#link-to-server-datastore)
 
 ## Initialization
 
