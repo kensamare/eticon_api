@@ -196,7 +196,7 @@ Future<void> patchRequest() async {
 
 ```dart
 void main() async {
-  await Api.init(baseUrl: 'https://example.com/', bearerToken: false);
+  await Api.init(urls: ['https://example.com/'], bearerToken: false);
   runApp(MyApp());
 }
 ```
@@ -286,7 +286,7 @@ formData.files.addAll([
 
 ```dart
 void main() async {
-  await Api.init(baseUrl: 'https://example.com/', globalTestMode: true);
+  await Api.init(urls: ['https://example.com/'], globalTestMode: true);
   runApp(MyApp());
 }
 
@@ -309,7 +309,7 @@ Future<void> getRequest() async {
 ```dart
 void main() async {
   await Api.init(
-    baseUrl: 'https://example.com/', 
+    urls: ['https://example.com/'], 
     globalTestMode: true, // Will be ignored
     disableAllTestMode: true,
   );
@@ -324,7 +324,7 @@ void main() async {
 
 ```dart
 void main() async {
-  await Api.init(baseUrl: 'https://example.com/', storageUrl: 'https://example.com/storage/');
+  await Api.init(urls: ['https://example.com/'], storageUrl: 'https://example.com/storage/');
   runApp(MyApp());
 }
 ```
@@ -341,7 +341,7 @@ Image.network(Api.dataFromStorage('image.png'));
 ```dart
 void main() async {
   await Api.init(
-    baseUrl: 'https://example.com/', 
+    urls: ['https://example.com/'], 
     ebableUtf8Decoding: true,
   );
   runApp(MyApp());
