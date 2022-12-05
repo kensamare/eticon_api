@@ -146,25 +146,15 @@ class DioApiST {
     String testModeType = type.toString().replaceAll('TYPE.', '');
 
     ///Генерация параметров
-    List<String> _queryList = [];
     if (type == 'GET' || type == 'DELETE') {
       if (data != null && data is Map && (testMode || _globalTestMode) && !_disableState) {
-        data.forEach((key, value) {
-          if (value is List) {
-            for (var el in value) _queryList.add('$key=${el.toString()}');
-          } else
-            _queryList.add('$key=${Uri.encodeComponent(value.toString())}');
-        });
-        Logger.log(_queryList.toString(), name: 'API TEST $testModeType: Query List', printMode: _usePrint);
+        Logger.log(data.toString(), name: 'API TEST $testModeType: Query List', printMode: _usePrint);
       }
     } else if ((testMode || _globalTestMode) && !_disableState && data is Map) {
       Logger.log(jsonEncode(data).toString(), name: 'API TEST $testModeType: Body in JSON', printMode: _usePrint);
     }
     //Формирование ссылки запроса
-    String url = '${baseUrl == null ? '${_urls[urlIndex]}$method' : baseUrl}' +
-        '${(type == 'GET' || type == 'DELETE') && _queryList.isNotEmpty ? '?${_queryList.join("&")}' : ''}';
-    if ((testMode || _globalTestMode) && !_disableState)
-      Logger.log(url.toString(), name: 'API TEST $testModeType: URL', printMode: _usePrint);
+    String url = '${baseUrl == null ? '${_urls[urlIndex]}$method' : baseUrl}';
     // Делаем запрос
     try {
       Map<String, String> allHeaders;
@@ -191,6 +181,7 @@ class DioApiST {
       );
 
       if ((testMode || _globalTestMode) && !_disableState) {
+        Logger.log(response.realUri.toString(), name: 'API TEST $testModeType: URL', printMode: _usePrint);
         Logger.log(response.statusCode.toString(), name: 'API TEST $testModeType: Response Code', printMode: _usePrint);
         if (response.data != null) {
           Logger.log(response.data.toString(), name: 'API TEST $testModeType: Response Body', printMode: _usePrint);
@@ -198,19 +189,28 @@ class DioApiST {
       }
       if (responseType == ResponseType.map_data) {
         try {
-          if (response.data is String) {
-            Map<String, dynamic> result = {};
-            String responseBody;
-            if (_enableUtf8Decoding) {
-              responseBody = utf8.decode(response.data.runes.toList());
+          if (response.data is! Map<String, dynamic>) {
+            if (response.data is String) {
+              Map<String, dynamic> result = {};
+              if (response.data.toString().isEmpty) {
+                return result;
+              }
+              print('TUT2');
+              String responseBody;
+              if (_enableUtf8Decoding) {
+                responseBody = utf8.decode(response.data.runes.toList());
+              } else {
+                responseBody = response.data;
+              }
+              result = jsonDecode(responseBody);
+              print(response.data);
+              if (response.data[0] != '{') {
+                result['key'] = json;
+              }
+              return result;
             } else {
-              responseBody = response.data;
+              return {'key': response.data};
             }
-            result = jsonDecode(responseBody);
-            if (response.data[0] != '{') {
-              result['key'] = json;
-            }
-            return result;
           } else {
             return response.data;
           }
