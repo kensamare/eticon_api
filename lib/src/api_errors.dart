@@ -12,7 +12,7 @@ class APIException implements Exception {
 
   APIException.fromDio(this.error) {
     code = error!.response?.statusCode ?? 0;
-    body = error!.error?.toString() ?? '';
+    body = error!.response?.data;
   }
 
   APIException(this.code, {this.body});

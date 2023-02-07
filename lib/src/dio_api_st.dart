@@ -139,6 +139,7 @@ class DioApiST {
     ResponseType responseType = ResponseType.map_data,
     d.CancelToken? cancelToken,
     dynamic data,
+    Map<String, dynamic>? queries,
     Function(int, int)? onSendProgress,
     Function(int, int)? onReceiveProgress,
     bool ignoreOnAllError = false,
@@ -172,7 +173,7 @@ class DioApiST {
       }
       d.Response response = await dio.request(
         url,
-        queryParameters: type == 'GET' || type == 'DELETE' ? data : null,
+        queryParameters: queries,
         data: !(type == 'GET' || type == 'DELETE') ? data : null,
         options: d.Options(headers: allHeaders, responseType: responseTypeFinal, method: type),
         onReceiveProgress: onReceiveProgress,
@@ -195,7 +196,6 @@ class DioApiST {
               if (response.data.toString().isEmpty) {
                 return result;
               }
-              print('TUT2');
               String responseBody;
               if (_enableUtf8Decoding) {
                 responseBody = utf8.decode(response.data.runes.toList());
@@ -222,6 +222,7 @@ class DioApiST {
     } on d.DioError catch (error) {
       if ((testMode || _globalTestMode) && !_disableState) {
         if (error.response != null) {
+          Logger.log(error.response!.realUri.toString(), name: 'API TEST $testModeType: URL', printMode: _usePrint);
           Logger.log(error.response!.statusCode.toString(),
               name: 'API TEST $testModeType: Response Code', printMode: _usePrint);
           if (error.response!.data != null) {
