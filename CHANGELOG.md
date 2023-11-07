@@ -1,3 +1,7 @@
+## 2.0.5
+* Update packages
+* Some bug's fix
+
 ## 2.0.0
 * Change main package to dio, if you want to use http and version 1.3.12(last before migration) of this package use OldApi
 * Remove "raw" requests, now you can use default request

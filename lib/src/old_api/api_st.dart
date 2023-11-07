@@ -5,7 +5,6 @@ import 'package:eticon_api/src/old_api/type.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart' show Response;
 import 'dart:convert';
-import 'dart:developer';
 
 ///Api singleton
 class ApiST {
@@ -135,7 +134,8 @@ class ApiST {
       if (query != null && query is Map)
         query.forEach((key, value) {
           if (value is List) {
-            for (var el in value) _queryList.add('$key=${Uri.encodeComponent(el.toString())}');
+            for (var el in value)
+              _queryList.add('$key=${Uri.encodeComponent(el.toString())}');
           } else
             _queryList.add('$key=${Uri.encodeComponent(value.toString())}');
         });
@@ -143,16 +143,19 @@ class ApiST {
         _queryList.add(query.toString());
       }
       if ((testMode || _globalTestMode) && !_disableState) {
-        Logger.log(_queryList.toString(), name: 'API TEST $testModeType: Query List');
+        Logger.log(_queryList.toString(),
+            name: 'API TEST $testModeType: Query List');
       }
     } else {
       if ((testMode || _globalTestMode) && !_disableState) {
-        Logger.log(jsonEncode(query).toString(), name: 'API TEST $testModeType: Body in JSON');
+        Logger.log(jsonEncode(query).toString(),
+            name: 'API TEST $testModeType: Body in JSON');
       }
     }
     //Формирование ссылки запроса
-    Uri url = Uri.parse('${baseUrl == null ? '${_urls[urlIndex]}$method' : baseUrl}' +
-        '${(type == TYPE.GET || type == TYPE.DEL) && _queryList.isNotEmpty ? '?${_queryList.join("&")}' : ''}');
+    Uri url = Uri.parse(
+        '${baseUrl == null ? '${_urls[urlIndex]}$method' : baseUrl}' +
+            '${(type == TYPE.GET || type == TYPE.DEL) && _queryList.isNotEmpty ? '?${_queryList.join("&")}' : ''}');
     if ((testMode || _globalTestMode) && !_disableState)
       Logger.log(url.toString(), name: 'API TEST $testModeType: URL');
     // Делаем запрос
@@ -161,13 +164,16 @@ class ApiST {
     try {
       Map<String, String> headers;
       if (rawHeaders == null) {
-        headers = isAuth ? getAuthHeader(token: Token.instance.token) : getNoAuthHeader;
+        headers = isAuth
+            ? getAuthHeader(token: Token.instance.token)
+            : getNoAuthHeader;
       } else {
         headers = rawHeaders;
       }
       if ((testMode || _globalTestMode) && !_disableState) {
         if (isAuth) {
-          Logger.log(Token.instance.token.toString(), name: 'API TEST $testModeType: Token');
+          Logger.log(Token.instance.token.toString(),
+              name: 'API TEST $testModeType: Token');
         }
         Logger.log(headers.toString(), name: 'API TEST $testModeType: Headers');
       }
@@ -176,20 +182,24 @@ class ApiST {
           response = await http.get(url, headers: headers);
           break;
         case TYPE.POST:
-          response = await http.post(url, headers: headers, body: query is Map ? jsonEncode(query) : query);
+          response = await http.post(url,
+              headers: headers, body: query is Map ? jsonEncode(query) : query);
           break;
         case TYPE.DEL:
           response = await http.delete(url, headers: headers);
           break;
         case TYPE.PUT:
-          response = await http.put(url, headers: headers, body: query is Map ? jsonEncode(query) : query);
+          response = await http.put(url,
+              headers: headers, body: query is Map ? jsonEncode(query) : query);
           break;
         case TYPE.PATCH:
-          response = await http.patch(url, headers: headers, body: query is Map ? jsonEncode(query) : query);
+          response = await http.patch(url,
+              headers: headers, body: query is Map ? jsonEncode(query) : query);
           break;
       }
       if ((testMode || _globalTestMode) && !_disableState) {
-        Logger.log(response.statusCode.toString(), name: 'API TEST $testModeType: Response Code');
+        Logger.log(response.statusCode.toString(),
+            name: 'API TEST $testModeType: Response Code');
         if (response.body.isNotEmpty) {
           String responseBody;
           if (_enableUtf8Decoding) {
@@ -198,9 +208,11 @@ class ApiST {
             responseBody = response.body;
           }
           if (response.body[0] != '{') {
-            Logger.log(responseBody, name: 'API TEST $testModeType: Response Body');
+            Logger.log(responseBody,
+                name: 'API TEST $testModeType: Response Body');
           } else {
-            Logger.log(json.decode(responseBody).toString(), name: 'API TEST $testModeType: Response Body');
+            Logger.log(json.decode(responseBody).toString(),
+                name: 'API TEST $testModeType: Response Body');
           }
         }
       }
@@ -221,7 +233,8 @@ class ApiST {
       var responseParams;
       try {
         if (_enableUtf8Decoding) {
-          responseParams = json.decode(utf8.decode(response.body.runes.toList()));
+          responseParams =
+              json.decode(utf8.decode(response.body.runes.toList()));
         } else {
           responseParams = json.decode(response.body);
         }
@@ -231,7 +244,8 @@ class ApiST {
       // Проверка на Map
       if (responseParams is! Map) {
         if ((testMode || _globalTestMode) && !_disableState) {
-          Logger.log('Response body is not a MAP, convert to {\'key\': response.body}',
+          Logger.log(
+              'Response body is not a MAP, convert to {\'key\': response.body}',
               name: 'API TEST $testModeType: MAP Status');
         }
         Map<String, dynamic> res = {'key': responseParams};

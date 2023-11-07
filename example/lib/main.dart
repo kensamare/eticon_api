@@ -42,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> getRequest() async {
     try {
-      Map<String, dynamic> response = await Api.get(
+      final Map<String, dynamic> response = await Api.get(
         method: 'product',
       );
     } on APIException catch (error) {

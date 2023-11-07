@@ -149,7 +149,12 @@ class DartApi {
       Map<String, dynamic>? query,
       int urlIndex = 0}) async {
     return await ApiST.instance.request(
-        type: TYPE.GET, baseUrl: url, rawHeaders: headers, testMode: testMode, query: query, urlIndex: urlIndex);
+        type: TYPE.GET,
+        baseUrl: url,
+        rawHeaders: headers,
+        testMode: testMode,
+        query: query,
+        urlIndex: urlIndex);
   }
 
   /// Sends an HTTP POST request.
@@ -160,7 +165,12 @@ class DartApi {
       required Object body,
       int urlIndex = 0}) async {
     return await ApiST.instance.request(
-        type: TYPE.POST, baseUrl: url, rawHeaders: headers, testMode: testMode, query: body, urlIndex: urlIndex);
+        type: TYPE.POST,
+        baseUrl: url,
+        rawHeaders: headers,
+        testMode: testMode,
+        query: body,
+        urlIndex: urlIndex);
   }
 
   /// Sends an HTTP PUT request.
@@ -171,7 +181,12 @@ class DartApi {
       required Map<String, dynamic> body,
       int urlIndex = 0}) async {
     return await ApiST.instance.request(
-        type: TYPE.PUT, baseUrl: url, rawHeaders: headers, testMode: testMode, query: body, urlIndex: urlIndex);
+        type: TYPE.PUT,
+        baseUrl: url,
+        rawHeaders: headers,
+        testMode: testMode,
+        query: body,
+        urlIndex: urlIndex);
   }
 
   /// Sends an HTTP DELETE request.
@@ -182,7 +197,12 @@ class DartApi {
       Map<String, dynamic>? query,
       int urlIndex = 0}) async {
     return await ApiST.instance.request(
-        type: TYPE.DEL, baseUrl: url, rawHeaders: headers, testMode: testMode, query: query, urlIndex: urlIndex);
+        type: TYPE.DEL,
+        baseUrl: url,
+        rawHeaders: headers,
+        testMode: testMode,
+        query: query,
+        urlIndex: urlIndex);
   }
 
   /// Sends an HTTP PUT request.
@@ -193,6 +213,11 @@ class DartApi {
       required Map<String, dynamic> body,
       int urlIndex = 0}) async {
     return await ApiST.instance.request(
-        type: TYPE.PATCH, baseUrl: url, rawHeaders: headers, testMode: testMode, query: body, urlIndex: urlIndex);
+        type: TYPE.PATCH,
+        baseUrl: url,
+        rawHeaders: headers,
+        testMode: testMode,
+        query: body,
+        urlIndex: urlIndex);
   }
 }

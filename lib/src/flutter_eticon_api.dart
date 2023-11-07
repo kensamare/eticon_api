@@ -1,5 +1,4 @@
 import 'package:eticon_api/eticon_api.dart';
-import 'package:eticon_api/src/api_errors.dart';
 import 'package:eticon_api/src/dio_api_st.dart';
 import 'package:eticon_api/src/old_api/api_st.dart';
 import 'package:eticon_api/src/token.dart';
@@ -24,7 +23,8 @@ class Api {
     if (urls.isEmpty) {
       throw APIException(-1, body: 'URLs list is empty');
     }
-    if (!urls[0].startsWith('http')) throw APIException(-1, body: 'The url should start with https or http');
+    if (!urls[0].startsWith('http'))
+      throw APIException(-1, body: 'The url should start with https or http');
     for (int i = 0; i < urls.length; i++) {
       if (!urls[i].endsWith('/')) {
         urls[i] += '/';
@@ -42,9 +42,11 @@ class Api {
       if (token.isNotEmpty) {
         Token.instance.setRefreshToken(token);
       }
-      String expireTimeString = GetStorage().read('ApiEticonMainExpireDate2312') ?? '';
+      String expireTimeString =
+          GetStorage().read('ApiEticonMainExpireDate2312') ?? '';
       if (expireTimeString.isNotEmpty) {
-        DateTime expireTime = DateTime.parse(GetStorage().read('ApiEticonMainExpireDate2312'));
+        DateTime expireTime =
+            DateTime.parse(GetStorage().read('ApiEticonMainExpireDate2312'));
         Token.instance.expireDate = expireTime;
       }
     } else {
@@ -86,7 +88,8 @@ class Api {
   ///Help to get url to resource in server storage
   static String dataFromStorage(String path) {
     if (DioApiST.instance.storageUrl == null) {
-      throw APIException(-1, body: 'Storage url is null, set storageUrl in Api.init()');
+      throw APIException(-1,
+          body: 'Storage url is null, set storageUrl in Api.init()');
     } else {
       return '${DioApiST.instance.storageUrl}$path';
     }
@@ -107,7 +110,10 @@ class Api {
   static bool get tokenIsEmpty => Token.instance.token.isEmpty;
 
   ///Clear Token
-  static void get clearToken => Token.instance.setToken('');
+  static void get clearToken {
+    GetStorage().write('ApiEticonMainAuthToken2312', '');
+    Token.instance.setToken('');
+  }
 
   ///Set Authorization token
   static void setToken(String token) {
@@ -122,7 +128,8 @@ class Api {
   static String? get refreshToken => Token.instance.refreshToken;
 
   ///Return Authorization token
-  static DateTime? get expireDate => Token.instance.expireDate.year == 1970 ? null : Token.instance.expireDate;
+  static DateTime? get expireDate =>
+      Token.instance.expireDate.year == 1970 ? null : Token.instance.expireDate;
 
   ///Clear Token
   static void get clearRefreshToken => Token.instance.setRefreshToken('');
@@ -148,11 +155,13 @@ class Api {
       throw APIException(-1, body: 'Need Api.init() before setRefreshToken');
     }
     Token.instance.setExpire(seconds);
-    GetStorage().write('ApiEticonMainExpireDate2312', Token.instance.expireDate.toString());
+    GetStorage().write(
+        'ApiEticonMainExpireDate2312', Token.instance.expireDate.toString());
   }
 
   ///Check token for expire
-  static bool get isTokenExpire => DateTime.now().isAfter(Token.instance.expireDate);
+  static bool get isTokenExpire =>
+      DateTime.now().isAfter(Token.instance.expireDate);
 
   /// Sends an HTTP GET request.
   static Future<dynamic> get(String path,
@@ -247,7 +256,7 @@ class Api {
         testMode: testMode,
         headers: headers,
         queries: query,
-        responseType: responseType ?? ResponseType.map_data,
+        responseType: responseType,
         cancelToken: cancelToken,
         data: body,
         onReceiveProgress: onReceiveProgress,

@@ -3,9 +3,7 @@ import 'package:eticon_api/src/api_errors.dart';
 import 'package:eticon_api/src/flutter_eticon_api.dart';
 import 'package:eticon_api/src/logger.dart';
 import 'package:eticon_api/src/token.dart';
-import 'package:eticon_api/src/old_api/type.dart';
 import 'dart:convert';
-import 'dart:developer';
 
 ///Api singleton
 class DioApiST {
@@ -148,24 +146,32 @@ class DioApiST {
 
     ///Генерация параметров
     if (type == 'GET' || type == 'DELETE') {
-      if (data != null && data is Map && (testMode || _globalTestMode) && !_disableState) {
-        Logger.log(data.toString(), name: 'API TEST $testModeType: Query List', printMode: _usePrint);
+      if (data != null &&
+          data is Map &&
+          (testMode || _globalTestMode) &&
+          !_disableState) {
+        Logger.log(data.toString(),
+            name: 'API TEST $testModeType: Query List', printMode: _usePrint);
       }
     } else if ((testMode || _globalTestMode) && !_disableState && data is Map) {
-      Logger.log(jsonEncode(data).toString(), name: 'API TEST $testModeType: Body in JSON', printMode: _usePrint);
+      Logger.log(jsonEncode(data).toString(),
+          name: 'API TEST $testModeType: Body in JSON', printMode: _usePrint);
     }
     //Формирование ссылки запроса
     String url = '${baseUrl == null ? '${_urls[urlIndex]}$method' : baseUrl}';
     // Делаем запрос
     try {
       Map<String, String> allHeaders;
-      allHeaders = isAuth ? getAuthHeader(token: Token.instance.token) : getNoAuthHeader;
+      allHeaders =
+          isAuth ? getAuthHeader(token: Token.instance.token) : getNoAuthHeader;
       allHeaders.addAll(headers ?? {});
       if ((testMode || _globalTestMode) && !_disableState) {
         if (isAuth) {
-          Logger.log(Token.instance.token.toString(), name: 'API TEST $testModeType: Token', printMode: _usePrint);
+          Logger.log(Token.instance.token.toString(),
+              name: 'API TEST $testModeType: Token', printMode: _usePrint);
         }
-        Logger.log(allHeaders.toString(), name: 'API TEST $testModeType: Headers', printMode: _usePrint);
+        Logger.log(allHeaders.toString(),
+            name: 'API TEST $testModeType: Headers', printMode: _usePrint);
       }
       d.ResponseType? responseTypeFinal;
       if (responseType != ResponseType.map_data) {
@@ -175,17 +181,23 @@ class DioApiST {
         url,
         queryParameters: queries,
         data: !(type == 'GET' || type == 'DELETE') ? data : null,
-        options: d.Options(headers: allHeaders, responseType: responseTypeFinal, method: type),
+        options: d.Options(
+            headers: allHeaders, responseType: responseTypeFinal, method: type),
         onReceiveProgress: onReceiveProgress,
         onSendProgress: onSendProgress,
         cancelToken: cancelToken,
       );
 
       if ((testMode || _globalTestMode) && !_disableState) {
-        Logger.log(response.realUri.toString(), name: 'API TEST $testModeType: URL', printMode: _usePrint);
-        Logger.log(response.statusCode.toString(), name: 'API TEST $testModeType: Response Code', printMode: _usePrint);
+        Logger.log(response.realUri.toString(),
+            name: 'API TEST $testModeType: URL', printMode: _usePrint);
+        Logger.log(response.statusCode.toString(),
+            name: 'API TEST $testModeType: Response Code',
+            printMode: _usePrint);
         if (response.data != null) {
-          Logger.log(response.data.toString(), name: 'API TEST $testModeType: Response Body', printMode: _usePrint);
+          Logger.log(response.data.toString(),
+              name: 'API TEST $testModeType: Response Body',
+              printMode: _usePrint);
         }
       }
       if (responseType == ResponseType.map_data) {
@@ -219,15 +231,18 @@ class DioApiST {
         }
       }
       return response;
-    } on d.DioError catch (error) {
+    } on d.DioException catch (error) {
       if ((testMode || _globalTestMode) && !_disableState) {
         if (error.response != null) {
-          Logger.log(error.response!.realUri.toString(), name: 'API TEST $testModeType: URL', printMode: _usePrint);
+          Logger.log(error.response!.realUri.toString(),
+              name: 'API TEST $testModeType: URL', printMode: _usePrint);
           Logger.log(error.response!.statusCode.toString(),
-              name: 'API TEST $testModeType: Response Code', printMode: _usePrint);
+              name: 'API TEST $testModeType: Response Code',
+              printMode: _usePrint);
           if (error.response!.data != null) {
             Logger.log(error.response!.data.toString(),
-                name: 'API TEST $testModeType: Response Body', printMode: _usePrint);
+                name: 'API TEST $testModeType: Response Body',
+                printMode: _usePrint);
           }
         }
       }
